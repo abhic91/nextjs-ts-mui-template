@@ -1,0 +1,11 @@
+{
+  "phone-number": "Phone Number",
+  "enter-registered-phone-number": "Enter your registered phone number",
+  "enter-10-digit-number": "Enter a valid 10 digit phone number",
+  "request-otp": "Request OTP",
+  "otp": "OTP",
+  "enter-otp": "Enter the registered OTP sent to your phone number",
+  "didnt-receive": "Didn't receive OTP?",
+  "resend-otp": "Resend OTP",
+  "verify-phone": "Verify Phone Number"
+}

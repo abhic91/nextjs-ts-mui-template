@@ -1,5 +1,5 @@
 import React from 'react';
-import NextLink, { LinkProps as NextLinkProps } from 'next/link';
+import Link, { LinkProps as NextLinkProps } from 'next/link';
 
 interface NextLinkComposedProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
@@ -8,10 +8,10 @@ interface NextLinkComposedProps
   href: NextLinkProps['href'];
 }
 
-export const NextLinkComposed = React.forwardRef<HTMLAnchorElement, NextLinkComposedProps>(function NextLinkComposed(props, ref) {
+export const NextLink = React.forwardRef<HTMLAnchorElement, NextLinkComposedProps>(function NextLinkComposed(props, ref) {
   const { linkAs, href, replace, scroll, shallow, prefetch, locale, children, ...other } = props;
   return (
-    <NextLink
+    <Link
       href={href}
       prefetch={prefetch}
       as={linkAs}
@@ -23,6 +23,6 @@ export const NextLinkComposed = React.forwardRef<HTMLAnchorElement, NextLinkComp
       <a ref={ref} {...other}>
         {children}
       </a>
-    </NextLink>
+    </Link>
   );
 });
