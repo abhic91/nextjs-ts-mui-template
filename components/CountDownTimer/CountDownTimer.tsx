@@ -1,33 +1,52 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import classes from './CountDownTimer.module.css';
 
 dayjs.extend(duration);
 type CountDownTimerProps = {
   startTimeInSeconds: number;
   onTimerDone?: Function;
+  restartTimerKey: number;
 };
-const CountDownTimer = ({ startTimeInSeconds }: CountDownTimerProps) => {
+
+const CountDownTimer = function CountDownTimer({ startTimeInSeconds, onTimerDone, restartTimerKey }: CountDownTimerProps) {
   const [time, setTime] = useState(dayjs.duration(startTimeInSeconds, 'seconds'));
   const [timeInMinuteSecondFormat, setTimeInMinuteSecondFormat] = useState('00:00');
+  const intervalRef = useRef<number>(-1);
 
-  console.log(time);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
+  const startTimer = useCallback(() => {
+    clearInterval(intervalRef.current);
+    setTime(dayjs.duration(startTimeInSeconds, 'seconds'));
+    intervalRef.current = window.setInterval(() => {
       setTime((prevTime) => {
-        if (prevTime.asSeconds() === 1) clearInterval(interval);
+        if (prevTime.asSeconds() === 1) {
+          clearInterval(intervalRef.current);
+        }
         return prevTime.subtract(1, 'seconds');
       });
     }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  }, [startTimeInSeconds]);
 
   useEffect(() => {
-    setTimeInMinuteSecondFormat(time.format('mm:ss'));
-  }, [time]);
+    startTimer();
+    return () => clearInterval(intervalRef.current);
+  }, [startTimer]);
 
-  return <>{<span>{timeInMinuteSecondFormat}</span>}</>;
+  useEffect(() => {
+    if (time.asSeconds() === 0) onTimerDone?.();
+    setTimeInMinuteSecondFormat(time.format('mm:ss'));
+  }, [time, onTimerDone]);
+
+  useEffect(() => {
+    startTimer();
+  }, [restartTimerKey, startTimer]);
+
+  return (
+    <>
+      <span className={classes.timerWrapper}>{timeInMinuteSecondFormat}</span>
+    </>
+  );
 };
 
 export default CountDownTimer;

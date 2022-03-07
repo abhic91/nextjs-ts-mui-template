@@ -1,15 +1,19 @@
-import { Box, Button, FormControl, FormHelperText, FormLabel, InputAdornment, TextField } from '@mui/material';
+import { Box, Button, Fade, FormControl, FormHelperText, FormLabel, InputAdornment, Snackbar, TextField } from '@mui/material';
 import type { GetStaticProps, NextPage } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { registerWithBankApi, verifyOTPApi } from '../api-requests/verify';
 import CountDownTimer from '../components/CountDownTimer/CountDownTimer';
 import OTPInput from '../components/OTPInput/OTPInput';
+import classes from './index.module.css';
 
 type VerifyPhoneForm = {
   phoneNumber: string;
 };
+
+const OTPLength = 6;
 
 const Home: NextPage = () => {
   const { t } = useTranslation('verify-phone');
@@ -18,23 +22,76 @@ const Home: NextPage = () => {
     control,
     formState: { errors },
     setFocus,
+    getValues,
   } = useForm<VerifyPhoneForm>({ defaultValues: { phoneNumber: '' } });
 
-  const onSubmit = (data: VerifyPhoneForm) => console.log(data);
   const [enteredOTP, setEnteredOTP] = useState<string>('');
-  const [isOTPError] = useState<Boolean>(false);
+  const [otpErrMessage, setOTPErrMessage] = useState<string>(t('enter-otp'));
+  const [isOTPError, setIsOTPError] = useState(false);
+  const [disableResendBtn, setDisableResendBtn] = useState(true);
+  const [restartTimerKey, setRestartTimerKey] = useState(0);
+  const [snackMessage, setSnackMessage] = useState('');
+  const [showOTP, setShowOTP] = useState(false);
+  const [focusOnFirstInputOnVisibleKey, setFocusOnFirstInputOnVisibleKey] = useState(0);
+  const [sessionId, setSessionId] = useState<string>('');
 
-  const onTimerDone = () => {};
+  const onTimerDone = useCallback(() => {
+    setDisableResendBtn(false);
+  }, []);
+  const onResendClick = () => {
+    setDisableResendBtn(true);
+    setOTPErrMessage(t('enter-otp'));
+    setIsOTPError(false);
+    setRestartTimerKey((prev) => prev + 1);
+    requestOTP(getValues());
+  };
+  const requestOTP = async (data: VerifyPhoneForm) => {
+    try {
+      if (errors.phoneNumber) return;
+      const res = await registerWithBankApi({ mobile: `91${data.phoneNumber}` });
+      setSessionId(res.data.sessionId);
+    } catch (error) {
+      setShowOTP(true); //TODO: REMOVE THIS
+      console.log(error);
+      setSnackMessage(error?.response?.data?.message || 'An error occurred');
+    }
+  };
 
-  console.log({ enteredOTP });
+  const verifyOTP = async () => {
+    try {
+      if (enteredOTP.length !== OTPLength) {
+        setOTPErrMessage(t('enter-otp'));
+        setIsOTPError(true);
+        return;
+      }
+      const res = await verifyOTPApi({ otp: enteredOTP, sessionId, mobile: `91${getValues().phoneNumber}` });
+      setSnackMessage(res.data.message);
+    } catch (error) {
+      console.log(error);
+      setIsOTPError(true);
+      setOTPErrMessage(error.response?.data?.message || 'An error occurred');
+      setSnackMessage(error.response?.data?.message || 'An error occurred');
+    }
+  };
 
   useEffect(() => {
     setFocus('phoneNumber');
   }, [setFocus]);
 
+  useEffect(() => {
+    if (snackMessage) {
+      setTimeout(() => setSnackMessage(''), 3000);
+    }
+  }, [snackMessage]);
+
+  useEffect(() => {
+    setIsOTPError(false);
+    setOTPErrMessage(t('enter-otp'));
+  }, [enteredOTP, setOTPErrMessage, t]);
+
   return (
-    <div>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ m: 3 }}>
+    <Box sx={{ py: 3, px: 3, boxShadow: 2, borderRadius: 3 }} className={classes.verifyPageWrapper}>
+      <Box component="form" onSubmit={handleSubmit(requestOTP)}>
         <FormControl fullWidth>
           <FormLabel sx={{ mb: 1 }} id="phoneLbl" htmlFor="phoneTxtField">
             {t('phone-number')}
@@ -65,35 +122,50 @@ const Home: NextPage = () => {
             }}
           />
         </FormControl>
-        <FormControl>
-          <FormLabel sx={{ mb: 1 }} id="otpInpLbl">
-            {t('otp')}
-          </FormLabel>
-          <OTPInput noOfInputs={6} setValue={setEnteredOTP} isErrorProp={isOTPError} />
-          <FormHelperText error={Boolean(isOTPError)}>{t('enter-otp')}</FormHelperText>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Box>
-              <FormHelperText>{t('didnt-receive')}</FormHelperText>
-              <Button size="small" variant="link">
-                {t('resend-otp')}
-              </Button>
-            </Box>
-            <CountDownTimer startTimeInSeconds={5} onTimerDone={onTimerDone} />
+        {!showOTP && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+            <Button type="submit">{t('request-otp')}</Button>
           </Box>
-        </FormControl>
-        {/* <FormControl fullWidth>
-          <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-          <RadioGroup row aria-labelledby="demo-radio-buttons-group-label" defaultValue="female" name="radio-buttons-group">
-            <FormControlLabel value="female" control={<Radio />} label="Female" />
-            <FormControlLabel value="male" control={<Radio />} label="Male" />
-            <FormControlLabel value="other" control={<Radio />} label="Other" />
-          </RadioGroup>
-        </FormControl> */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-          <Button type="submit">{t('request-otp')}</Button>
-        </Box>
+        )}
       </Box>
-    </div>
+
+      <Box component="form" onSubmit={verifyOTP} autoComplete="off">
+        <FormControl>
+          <Fade in={showOTP} addEndListener={() => setFocusOnFirstInputOnVisibleKey((k) => k + 1)}>
+            <Box>
+              <FormLabel sx={{ mb: 1 }} id="otpInpLbl">
+                {t('otp')}
+              </FormLabel>
+              <OTPInput
+                noOfInputs={OTPLength}
+                setValue={setEnteredOTP}
+                focusOnFirstInputOnVisibleKey={focusOnFirstInputOnVisibleKey}
+                isErrorProp={isOTPError}
+                onEnterPressed={verifyOTP}
+              />
+              <FormHelperText error={isOTPError}>{otpErrMessage}</FormHelperText>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                <Box>
+                  <FormHelperText sx={{ mb: -0.8 }}>{t('didnt-receive')}</FormHelperText>
+                  <Button size="small" sx={{ ml: 0.375 }} disabled={disableResendBtn} variant="link" onClick={onResendClick}>
+                    {t('resend-otp')}
+                  </Button>
+                </Box>
+                <CountDownTimer restartTimerKey={restartTimerKey} startTimeInSeconds={60} onTimerDone={onTimerDone} />
+              </Box>
+            </Box>
+          </Fade>
+        </FormControl>
+        {showOTP && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+            <Button type="button" onClick={verifyOTP}>
+              {t('verify-phone')}
+            </Button>
+          </Box>
+        )}
+      </Box>
+      <Snackbar open={Boolean(snackMessage)} message={snackMessage} autoHideDuration={3000}></Snackbar>
+    </Box>
   );
 };
 

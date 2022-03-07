@@ -33,6 +33,8 @@ export default createTheme({
           style: {
             backgroundColor: 'transparent',
             color: colorPalette.palette.primary.main,
+            padding: 0,
+            margin: 0,
             '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
           },
         },

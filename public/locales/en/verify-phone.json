@@ -7,5 +7,7 @@
   "enter-otp": "Enter the OTP sent to your registered phone number",
   "didnt-receive": "Didn't receive OTP?",
   "resend-otp": "Resend OTP",
-  "verify-phone": "Verify Phone Number"
+  "verify-phone": "Verify Phone Number",
+  "invalid-otp": "The OTP you entered is invalid",
+  "verified-successfully": "Your phone number has been verified successfully"
 }

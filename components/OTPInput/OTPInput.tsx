@@ -8,13 +8,21 @@ type OTPInputProps = {
   isErrorProp: Boolean;
   clear?: Function; //TODO:
   setValue: Function; //function that sets value of parent's otp val state
+  focusOnFirstInputOnVisibleKey: number;
+  onEnterPressed: Function;
   //   inputTypeProp: '';
 };
-//TODO: PASTE
 //TODO: SIZE ON MOBILE
 //TODO: TRIM
 
-const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled }: OTPInputProps) => {
+const OTPInput = ({
+  noOfInputs,
+  isErrorProp,
+  setValue,
+  isDisabled,
+  focusOnFirstInputOnVisibleKey,
+  onEnterPressed,
+}: OTPInputProps) => {
   const noOfInputsArray = [...Array(noOfInputs)];
   const [inpValues, setInpValues] = useState<string[]>([...Array(noOfInputs)].map(() => ''));
   const [isError, setIsError] = useState<Boolean>(isErrorProp);
@@ -37,6 +45,9 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled }: OTPInputPro
   };
 
   const navigateUsingArrowKeys = (e: KeyboardEvent<HTMLDivElement>, index: number) => {
+    if (e.key === 'Enter') {
+      onEnterPressed();
+    }
     if (e.key === 'ArrowRight') setFocusOnInputAtIndex(index + 1);
     else if (e.key === 'ArrowLeft') setFocusOnInputAtIndex(index - 1);
   };
@@ -46,7 +57,11 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled }: OTPInputPro
     const pastedText = e.clipboardData.getData('Text');
     setInpValues(pastedText.split(''));
   };
-
+  useEffect(() => {
+    setTimeout(() => {
+      otpInputRefs.current[0].focus();
+    }, 1000);
+  }, []);
   useEffect(() => {
     setIsError(isErrorProp);
   }, [isErrorProp, setIsError]);
@@ -55,9 +70,13 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled }: OTPInputPro
     setValue(inpValues.join(''));
   }, [inpValues, setValue]);
 
+  useEffect(() => {
+    setFocusOnInputAtIndex(0);
+  }, [focusOnFirstInputOnVisibleKey]);
+
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+      <Box sx={{ display: 'flex', gap: 1 }}>
         {noOfInputsArray.map((_, indx) => (
           <TextField
             sx={{ maxWidth: '50px', '& input': { textAlign: 'center' } }}
