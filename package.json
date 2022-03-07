@@ -13,6 +13,7 @@
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.8.1",
     "@mui/material": "^5.4.4",
+    "dayjs": "^1.10.8",
     "next": "12.1.0",
     "next-i18next": "^10.5.0",
     "react": "17.0.2",

@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-export default createTheme({
+const colorPalette = createTheme({
   palette: {
     primary: {
       main: '#6E44FD',
@@ -13,6 +13,9 @@ export default createTheme({
       dark: '#1565c0',
     },
   },
+});
+export default createTheme({
+  ...colorPalette,
   components: {
     MuiButton: {
       styleOverrides: {
@@ -24,6 +27,16 @@ export default createTheme({
       defaultProps: {
         variant: 'contained',
       },
+      variants: [
+        {
+          props: { variant: 'link' },
+          style: {
+            backgroundColor: 'transparent',
+            color: colorPalette.palette.primary.main,
+            '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+          },
+        },
+      ],
     },
     MuiOutlinedInput: {
       styleOverrides: { root: { borderRadius: 8 } },

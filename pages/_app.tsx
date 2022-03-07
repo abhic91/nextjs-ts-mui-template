@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider } from '@emotion/react';
-import theme from '../theme';
+import theme from '../theme/theme';
 import createEmotionCache from '../createEmotionCache';
 import { AppProps } from 'next/dist/shared/lib/router/router';
 import { appWithTranslation } from 'next-i18next';

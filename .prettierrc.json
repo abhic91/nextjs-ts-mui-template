@@ -8,5 +8,6 @@
   "quoteProps": "as-needed",
   "jsxSingleQuote": false,
   "bracketSameLine": true,
-  "proseWrap": "always"
+  "proseWrap": "always",
+  "bracketSpacing": true
 }
