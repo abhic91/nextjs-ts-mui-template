@@ -45,5 +45,8 @@ export default createTheme({
       defaultProps: {},
     },
     MuiTextField: { defaultProps: { size: 'small' } },
+    MuiCircularProgress: {
+      defaultProps: { style: { width: '20px', height: '20px' } },
+    },
   },
 });

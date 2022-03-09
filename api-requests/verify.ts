@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { baseAPIURL } from '../config';
+import { TKYCForm, IDType } from '../pages/kyc/index';
 
 export type RegisterWithBankSuccessResponse = {
   sessionId: string;
@@ -13,9 +14,7 @@ type VerifyOTPSuccessResponse = {
 
 export async function registerWithBankApi(payload: { mobile: string }) {
   try {
-    const res = await axios.get<RegisterWithBankSuccessResponse>(`${baseAPIURL}/cardholders/yesbank/register`, {
-      params: payload,
-    });
+    const res = await axios.post<RegisterWithBankSuccessResponse>(`${baseAPIURL}/cardholders/yesbank/register`, payload);
     return Promise.resolve(res);
   } catch (error) {
     return Promise.reject(error);
@@ -25,6 +24,33 @@ export async function registerWithBankApi(payload: { mobile: string }) {
 export async function verifyOTPApi(payload: { otp: string; mobile: string; sessionId: string }) {
   try {
     const res = await axios.post<VerifyOTPSuccessResponse>(`${baseAPIURL}/cardholders/yesbank/verify`, payload);
+    return Promise.resolve(res);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+export async function submitKYCDetailsApi(payload: TKYCForm) {
+  let reqBody: { [key: string]: string } = {
+    mobile: `91${payload.mobile}`,
+    name: payload.name,
+    // panNumber:payload.,
+    dateOfBirth: `${payload.dobYear}-${payload.dobMonth.padStart(2, '0')}-${payload.dobDay.padStart(2, '0')}`,
+    address: payload.address,
+    pinCode: payload.pinCode,
+    gender: payload.gender,
+    // aadhaarNumber: '',
+    // panNumber: '',
+  };
+  let idType = '';
+  if (payload.idType === IDType.AADHAAR) {
+    reqBody = { ...reqBody, aadhaarNumber: payload.aadhaarNumber! };
+    idType = 'aadhaar';
+  } else {
+    idType = 'pan';
+    reqBody = { ...reqBody, panNumber: payload.panNumber! };
+  }
+  try {
+    const res = await axios.post(`${baseAPIURL}/cardholders/yesbank/${idType}`, reqBody);
     return Promise.resolve(res);
   } catch (error) {
     return Promise.reject(error);

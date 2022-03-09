@@ -6,23 +6,15 @@ type OTPInputProps = {
   noOfInputs: number;
   isDisabled?: Boolean;
   isErrorProp: Boolean;
-  clear?: Function; //TODO:
+  clearOTPKey?: number; //TODO:
   setValue: Function; //function that sets value of parent's otp val state
-  focusOnFirstInputOnVisibleKey: number;
   onEnterPressed: Function;
   //   inputTypeProp: '';
 };
 //TODO: SIZE ON MOBILE
 //TODO: TRIM
 
-const OTPInput = ({
-  noOfInputs,
-  isErrorProp,
-  setValue,
-  isDisabled,
-  focusOnFirstInputOnVisibleKey,
-  onEnterPressed,
-}: OTPInputProps) => {
+const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPressed, clearOTPKey }: OTPInputProps) => {
   const noOfInputsArray = [...Array(noOfInputs)];
   const [inpValues, setInpValues] = useState<string[]>([...Array(noOfInputs)].map(() => ''));
   const [isError, setIsError] = useState<Boolean>(isErrorProp);
@@ -60,7 +52,7 @@ const OTPInput = ({
   useEffect(() => {
     setTimeout(() => {
       otpInputRefs.current[0].focus();
-    }, 1000);
+    }, 100);
   }, []);
   useEffect(() => {
     setIsError(isErrorProp);
@@ -71,8 +63,8 @@ const OTPInput = ({
   }, [inpValues, setValue]);
 
   useEffect(() => {
-    setFocusOnInputAtIndex(0);
-  }, [focusOnFirstInputOnVisibleKey]);
+    setInpValues([...Array(noOfInputs)].map(() => ''));
+  }, [clearOTPKey, setInpValues, noOfInputs]);
 
   return (
     <>

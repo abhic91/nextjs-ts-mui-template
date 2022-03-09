@@ -1,0 +1,5 @@
+@font-face {
+  font-family: 'PPTelegraf';
+  src: url('/public/fonts/PPTelegraf-Regular.woff2') format('woff2'), url('/public/fonts/PPTelegraf-Regular.woff') format('woff');
+  font-weight: normal;
+}
