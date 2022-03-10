@@ -8,6 +8,7 @@ import theme from '../theme/theme';
 import createEmotionCache from '../createEmotionCache';
 import { AppProps } from 'next/dist/shared/lib/router/router';
 import { appWithTranslation } from 'next-i18next';
+import '../styles/font.css';
 import '../styles/globals.css';
 import Layout from '../components/Layout/Layout';
 

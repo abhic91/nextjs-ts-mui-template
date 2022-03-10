@@ -114,8 +114,11 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <Fade in={showPage} timeout={500} addEndListener={() => setFocus('phoneNumber')}>
+    <Fade in={showPage} timeout={200} addEndListener={() => setFocus('phoneNumber')}>
       <Box sx={{ py: 3, px: 3, boxShadow: 2, borderRadius: 3 }} className={classes.verifyPageWrapper}>
+        <Box component="h2" textAlign={{ xs: 'left', sm: 'center' }}>
+          {t('ready-to-activate')}
+        </Box>
         <Box component="form" onSubmit={handleSubmit(requestOTP)}>
           <FormControl fullWidth>
             <FormLabel sx={{ mb: 1 }} id="phoneLbl" htmlFor="phoneTxtField">
@@ -128,12 +131,17 @@ const Home: NextPage = () => {
                   error={Boolean(errors.phoneNumber)}
                   helperText={errors.phoneNumber?.message || t('enter-registered-phone-number')}
                   value={field.value}
+                  placeholder="Phone number"
                   type="tel"
                   onChange={field.onChange}
                   inputRef={field.ref}
                   sx={{ mb: 3 }}
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+                    startAdornment: (
+                      <InputAdornment sx={{ mr: 2 }} position="start">
+                        +91
+                      </InputAdornment>
+                    ),
                   }}
                 />
               )}
@@ -148,8 +156,8 @@ const Home: NextPage = () => {
             />
           </FormControl>
           {!showOTP && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-              <Button disabled={loading} type="submit">
+            <Box sx={{ display: 'flex', mt: 3, justifyContent: { sm: 'center' } }}>
+              <Button disabled={loading} type="submit" sx={{ flexGrow: { xs: 1, sm: 0 } }}>
                 {loading ? <CircularProgress color="inherit" /> : t('request-otp')}
               </Button>
             </Box>
@@ -177,7 +185,7 @@ const Home: NextPage = () => {
                       {t('resend-otp')}
                     </Button>
                   </Box>
-                  <CountDownTimer restartTimerKey={restartTimerKey} startTimeInSeconds={3} onTimerDone={onTimerDone} />
+                  <CountDownTimer restartTimerKey={restartTimerKey} startTimeInSeconds={60} onTimerDone={onTimerDone} />
                 </Box>
               </Box>
             </Fade>

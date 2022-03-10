@@ -9,5 +9,6 @@
   "resend-otp": "Resend OTP",
   "verify-phone": "Verify Phone Number",
   "invalid-otp": "The OTP you entered is invalid",
-  "verified-successfully": "Your phone number has been verified successfully"
+  "verified-successfully": "Your phone number has been verified successfully",
+  "ready-to-activate": "Ready to activate your card"
 }

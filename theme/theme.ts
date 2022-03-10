@@ -12,10 +12,30 @@ const colorPalette = createTheme({
       light: '#42a5f5',
       dark: '#1565c0',
     },
+    text: {
+      primary: '#070719',
+      secondary: '#393947',
+    },
   },
 });
 export default createTheme({
   ...colorPalette,
+  typography: {
+    fontFamily: [
+      'PPTelegraf',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      'Segoe UI',
+      'Roboto',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      'sans-serif',
+    ].join(','),
+  },
   components: {
     MuiButton: {
       styleOverrides: {
