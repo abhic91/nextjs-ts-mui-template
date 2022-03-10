@@ -34,7 +34,7 @@ export async function submitKYCDetailsApi(payload: TKYCForm) {
     mobile: `91${payload.mobile}`,
     name: payload.name,
     // panNumber:payload.,
-    dateOfBirth: `${payload.dobYear}-${payload.dobMonth.padStart(2, '0')}-${payload.dobDay.padStart(2, '0')}`,
+    dateOfBirth: payload.dob,
     address: payload.address,
     pinCode: payload.pinCode,
     gender: payload.gender,

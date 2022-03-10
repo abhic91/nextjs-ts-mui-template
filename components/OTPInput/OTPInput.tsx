@@ -50,9 +50,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
     setInpValues(pastedText.split(''));
   };
   useEffect(() => {
-    setTimeout(() => {
-      otpInputRefs.current[0].focus();
-    }, 100);
+    otpInputRefs.current[0].focus();
   }, []);
   useEffect(() => {
     setIsError(isErrorProp);
@@ -73,6 +71,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
           <TextField
             sx={{ maxWidth: '50px', '& input': { textAlign: 'center' } }}
             key={indx}
+            type="number"
             disabled={Boolean(isDisabled)}
             inputRef={(el) => (otpInputRefs.current[indx] = el)}
             error={Boolean(isError)}

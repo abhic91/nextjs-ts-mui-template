@@ -1,4 +1,20 @@
 import { createTheme } from '@mui/material/styles';
+const fontFamilies = [
+  'PPTelegraf',
+  '-apple-system',
+  'BlinkMacSystemFont',
+  'Segoe UI',
+  'Roboto',
+  'Oxygen',
+  'Ubuntu',
+  'Cantarell',
+  'Fira Sans',
+  'Droid Sans',
+  'Helvetica Neue',
+  'sans-serif',
+].join(',');
+
+export const topNavHeight = '75';
 
 const colorPalette = createTheme({
   palette: {
@@ -21,20 +37,8 @@ const colorPalette = createTheme({
 export default createTheme({
   ...colorPalette,
   typography: {
-    fontFamily: [
-      'PPTelegraf',
-      '-apple-system',
-      'BlinkMacSystemFont',
-      'Segoe UI',
-      'Roboto',
-      'Oxygen',
-      'Ubuntu',
-      'Cantarell',
-      'Fira Sans',
-      'Droid Sans',
-      'Helvetica Neue',
-      'sans-serif',
-    ].join(','),
+    fontFamily: fontFamilies,
+    lightgray: { ...colorPalette.typography.subtitle2, color: '#6A6A75', fontFamily: fontFamilies },
   },
   components: {
     MuiButton: {
@@ -58,6 +62,7 @@ export default createTheme({
             '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
           },
         },
+        { props: { variant: 'no-style' }, style: { all: 'unset' } },
       ],
     },
     MuiOutlinedInput: {
@@ -68,5 +73,7 @@ export default createTheme({
     MuiCircularProgress: {
       defaultProps: { style: { width: '20px', height: '20px' } },
     },
+    MuiRadio: { defaultProps: { size: 'small' } },
+    MuiAppBar: { styleOverrides: { root: { height: topNavHeight + 'px' } } },
   },
 });
