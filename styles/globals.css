@@ -1,3 +1,6 @@
+:root {
+  --default-bg: #fff;
+}
 html,
 body {
   padding: 0;
@@ -26,4 +29,11 @@ a {
 }
 .MuiFormHelperText-root {
   margin-left: 3px;
+}
+.custom-box-shadow-1 {
+  box-shadow: 0px 1px 3px -1px rgb(186 186 186 / 11%), -1px 0px 9px 3px rgb(143 140 140 / 7%),
+    0px 1px 8px 3px rgb(138 136 136 / 4%);
+}
+.custom-box-shadow-2 {
+  box-shadow: 0px 1px 5px -1px rgb(0 0 0 / 11%), -1px 0px 9px 3px rgb(0 0 0 / 7%), 0px 1px 8px 3px rgb(0 0 0 / 4%);
 }

@@ -16,14 +16,14 @@ const KycSuccess: NextPage = () => {
   }, []);
   return (
     <Fade in={showPage} timeout={800}>
-      <Box
-        className={classes.successPageWrapper}
-        sx={{ height: `calc(100vh - ${topNavHeight}px)`, display: 'grid', placeContent: 'center' }}>
+      <Box className={`${classes.successPageWrapper} `} sx={{ height: `calc(100vh - ${topNavHeight}px)` }}>
         <Box
+          className={`custom-box-shadow-1`}
           sx={{
-            borderRadius: 2,
-            boxShadow: 1,
             p: 4,
+            mt: 2,
+            borderRadius: 2,
+            backgroundColor: `var(--default-bg)`,
           }}>
           <Box sx={{ display: 'grid', placeContent: 'center' }}>
             <SuccessIcon />
@@ -31,10 +31,10 @@ const KycSuccess: NextPage = () => {
           <Typography variant="h5" textAlign="center" sx={{ mt: 3, mb: 1 }}>
             {t('kyc-completed')}
           </Typography>
-          <Typography variant="caption" textAlign="center" component="h6">
+          <Typography variant="subtitle2" textAlign="center" component="p" sx={{ mb: 1 }}>
             {t('will-take')}
           </Typography>
-          <Typography variant="lightgray" textAlign="center">
+          <Typography variant="lightgray" textAlign="center" component="p">
             {t('will-inform')}
           </Typography>
         </Box>

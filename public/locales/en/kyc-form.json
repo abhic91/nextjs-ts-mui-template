@@ -16,7 +16,7 @@
   "year": "Year",
   "month": "Month",
   "day": "Day",
-  "enter-valid-dob": "Select Date of Birth",
+  "enter-valid-dob": "Select / Enter a valid date of birth in DD/MM/YYYY format",
   "male": "Male",
   "female": "Female",
   "gender": "Gender",

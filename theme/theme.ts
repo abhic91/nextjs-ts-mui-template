@@ -14,7 +14,7 @@ const fontFamilies = [
   'sans-serif',
 ].join(',');
 
-export const topNavHeight = '75';
+export const topNavHeight = '55';
 
 const colorPalette = createTheme({
   palette: {
@@ -32,6 +32,7 @@ const colorPalette = createTheme({
       primary: '#070719',
       secondary: '#393947',
     },
+    background: { default: '#fff' },
   },
 });
 export default createTheme({
@@ -46,6 +47,7 @@ export default createTheme({
         root: {
           borderRadius: 8,
           textTransform: 'capitalize',
+          minHeight: '36px',
         },
       },
       defaultProps: {

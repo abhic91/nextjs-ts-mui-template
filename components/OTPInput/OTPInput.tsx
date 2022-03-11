@@ -23,23 +23,27 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
   const onInput = (val: string, indx: number) => {
     val = val.length > 1 ? val.slice(-1) : val;
     if (val) setFocusOnInputAtIndex(indx + 1);
-    else setFocusOnInputAtIndex(indx - 1);
+    // else setFocusOnInputAtIndex(indx - 1);
     setInpValues((inpValues) => inpValues.map((currentVal, i) => (indx === i ? val : currentVal)));
   };
 
   const selectTypedText = (index: number) => {
     const ref = otpInputRefs.current[index];
-    if (ref?.value) ref.select();
+    if (ref?.value)
+      setTimeout(() => {
+        ref.select();
+      }, 0);
   };
   const setFocusOnInputAtIndex = (index: number) => {
     const ref = otpInputRefs.current[index];
     if (ref) ref.focus();
   };
 
-  const navigateUsingArrowKeys = (e: KeyboardEvent<HTMLDivElement>, index: number) => {
+  const handleKeyUp = (e: KeyboardEvent<HTMLDivElement>, index: number) => {
     if (e.key === 'Enter') {
       onEnterPressed();
     }
+    if (e.key === 'Backspace') setFocusOnInputAtIndex(index - 1);
     if (e.key === 'ArrowRight') setFocusOnInputAtIndex(index + 1);
     else if (e.key === 'ArrowLeft') setFocusOnInputAtIndex(index - 1);
   };
@@ -54,6 +58,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
   }, []);
   useEffect(() => {
     setIsError(isErrorProp);
+    // setFocusOnInputAtIndex(inpValues.findIndex((v) => v.length === 0));
   }, [isErrorProp, setIsError]);
 
   useEffect(() => {
@@ -62,6 +67,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
 
   useEffect(() => {
     setInpValues([...Array(noOfInputs)].map(() => ''));
+    setFocusOnInputAtIndex(0);
   }, [clearOTPKey, setInpValues, noOfInputs]);
 
   return (
@@ -77,7 +83,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
             error={Boolean(isError)}
             value={inpValues[indx]}
             inputProps={{ inputMode: 'numeric' }}
-            onKeyUp={(e) => navigateUsingArrowKeys(e, indx)}
+            onKeyUp={(e) => handleKeyUp(e, indx)}
             onFocus={() => selectTypedText(indx)}
             onChange={(e) => onInput(e.target.value, indx)}
             onPaste={(e) => onPaste(e)}></TextField>

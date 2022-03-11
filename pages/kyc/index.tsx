@@ -21,7 +21,7 @@ import { submitKYCDetailsApi } from '../../api-requests/verify';
 import { FormControlLabelBordered } from '../../components/BorderedRadioLabel/FormControlLabelBordered';
 import DatePickerLocalised from '../../components/DatePickerLocalised/DatePickerLocalised';
 import CalendarIcon from '../../components/Icons/CalendarIcon';
-import { topNavHeight } from '../../theme/theme';
+import TextFieldTrimmed from '../../components/TextFieldTrimmed/TextFieldTrimmed';
 import classes from './index.module.css';
 
 export enum IDType {
@@ -44,7 +44,7 @@ export type TKYCForm = {
   name: string;
   panNumber?: string;
   aadhaarNumber?: string;
-  dob: string;
+  dob: any;
   address: string;
   pinCode: string;
   gender: GENDER;
@@ -62,14 +62,14 @@ const KycForm = () => {
     control,
     getValues,
     trigger,
-    setFocus,
     formState: { errors },
+    setValue,
   } = useForm<TKYCForm>({
     defaultValues: {
       idType: IDType.PAN,
       mobile: '',
       name: '',
-      dob: dayjs().format('YYYY-MM-DD'),
+      dob: dayjs(),
       address: '',
       pinCode: '',
       panNumber: '',
@@ -83,6 +83,7 @@ const KycForm = () => {
   const submitForm = async (data: TKYCForm) => {
     try {
       setLoading(true);
+      data = { ...data, dob: dayjs(data.dob).format('YYYY-MM-DD') };
       const res = await submitKYCDetailsApi(data);
       setLoading(false);
       console.log(res);
@@ -92,7 +93,6 @@ const KycForm = () => {
       console.log(error);
     }
   };
-
   useEffect(() => {
     setShowForm(true);
   }, []);
@@ -105,17 +105,15 @@ const KycForm = () => {
   }, [snackMessage]);
 
   return (
-    <Fade in={showForm} timeout={{ enter: 500 }} addEndListener={() => setFocus('panNumber')}>
+    <Fade in={showForm} timeout={{ enter: 500 }}>
       <Box
         sx={{
-          height: `calc(100vh - ${topNavHeight}px)`,
           display: 'grid',
           placeContent: 'center',
-          marginTop: `${topNavHeight}px`,
         }}>
         <Box
-          className={classes.kycFormWrapper}
-          sx={{ pt: 5, pb: 3, px: { xs: 3, md: 7 }, boxShadow: 1, borderRadius: 2 }}
+          className={`custom-box-shadow-2 ${classes.kycFormWrapper}`}
+          sx={{ pt: 4, pb: 3, px: { xs: 3, md: 7 }, borderRadius: 2 }}
           component="form"
           onSubmit={handleSubmit(submitForm)}>
           <Grid container columnSpacing={6} rowSpacing={2}>
@@ -165,7 +163,7 @@ const KycForm = () => {
                     </FormLabel>
                     <Controller
                       render={({ field }) => (
-                        <TextField
+                        <TextFieldTrimmed
                           id="panNumber"
                           error={Boolean(errors.panNumber)}
                           helperText={errors.panNumber?.message}
@@ -174,6 +172,8 @@ const KycForm = () => {
                           inputRef={field.ref}
                           placeholder={t('enter-pan')}
                           sx={{ mb: { xs: 1, sm: 2.5 } }}
+                          reactHookFormKey="panNumber"
+                          setTrimmedValueOnBlurOrSubmit={setValue}
                         />
                       )}
                       name="panNumber"
@@ -194,7 +194,7 @@ const KycForm = () => {
                     </FormLabel>
                     <Controller
                       render={({ field }) => (
-                        <TextField
+                        <TextFieldTrimmed
                           id="aadhaarNumber"
                           error={Boolean(errors.aadhaarNumber)}
                           helperText={errors.aadhaarNumber?.message}
@@ -203,6 +203,8 @@ const KycForm = () => {
                           inputRef={field.ref}
                           placeholder={t('enter-aadhaar')}
                           sx={{ mb: { xs: 1, sm: 2.5 } }}
+                          reactHookFormKey="aadhaarNumber"
+                          setTrimmedValueOnBlurOrSubmit={setValue}
                         />
                       )}
                       name="aadhaarNumber"
@@ -227,7 +229,7 @@ const KycForm = () => {
                 </FormLabel>
                 <Controller
                   render={({ field }) => (
-                    <TextField
+                    <TextFieldTrimmed
                       id="name"
                       error={Boolean(errors.name)}
                       helperText={errors.name?.message}
@@ -236,6 +238,8 @@ const KycForm = () => {
                       inputRef={field.ref}
                       placeholder={t('enter-full-name')}
                       sx={{ mb: { xs: 1, sm: 2.5 } }}
+                      reactHookFormKey="name"
+                      setTrimmedValueOnBlurOrSubmit={setValue}
                     />
                   )}
                   name="name"
@@ -292,8 +296,14 @@ const KycForm = () => {
                     <DatePickerLocalised
                       aria-labelledby="dobLbl"
                       value={field.value}
+                      inputFormat="DD/MM/YYYY"
                       renderInput={(params) => (
-                        <TextField error={Boolean(errors.dob)} sx={{ mb: { xs: 1, sm: 2.5 } }} {...params} />
+                        <TextField
+                          sx={{ mb: { xs: 1, sm: 2.5 } }}
+                          helperText={errors.dob?.message}
+                          {...params}
+                          error={Boolean(errors.dob?.message)}
+                        />
                       )}
                       maxDate={dayjs()}
                       onChange={field.onChange}
@@ -306,6 +316,15 @@ const KycForm = () => {
                         ),
                       }}></DatePickerLocalised>
                   )}
+                  rules={{
+                    required: { value: true, message: t<string>('enter-valid-dob') },
+                    validate: {
+                      validDob: (val) => {
+                        const dob = dayjs(val);
+                        return (dob.isValid() && dob.isBefore(dayjs())) || t<string>('enter-valid-dob');
+                      },
+                    },
+                  }}
                   name="dob"></Controller>
               </FormControl>
             </Grid>
@@ -317,7 +336,7 @@ const KycForm = () => {
                 </FormLabel>
                 <Controller
                   render={({ field }) => (
-                    <TextField
+                    <TextFieldTrimmed
                       id="address"
                       error={Boolean(errors.address)}
                       helperText={errors.address?.message}
@@ -326,6 +345,8 @@ const KycForm = () => {
                       inputRef={field.ref}
                       placeholder={t('enter-address')}
                       sx={{ mb: { xs: 1, sm: 2.5 } }}
+                      reactHookFormKey="address"
+                      setTrimmedValueOnBlurOrSubmit={setValue}
                     />
                   )}
                   name="address"
@@ -346,7 +367,7 @@ const KycForm = () => {
                     </FormLabel>
                     <Controller
                       render={({ field }) => (
-                        <TextField
+                        <TextFieldTrimmed
                           id="pinCode"
                           error={Boolean(errors.pinCode)}
                           helperText={errors.pinCode?.message}
@@ -356,6 +377,8 @@ const KycForm = () => {
                           inputRef={field.ref}
                           placeholder={t('enter-pin')}
                           sx={{ mb: { xs: 1, sm: 2.5 } }}
+                          reactHookFormKey="pinCode"
+                          setTrimmedValueOnBlurOrSubmit={setValue}
                         />
                       )}
                       name="pinCode"
@@ -376,7 +399,7 @@ const KycForm = () => {
                     </FormLabel>
                     <Controller
                       render={({ field }) => (
-                        <TextField
+                        <TextFieldTrimmed
                           id="city"
                           error={Boolean(errors.city)}
                           helperText={errors.city?.message}
@@ -385,6 +408,8 @@ const KycForm = () => {
                           inputRef={field.ref}
                           sx={{ mb: { xs: 1, sm: 2.5 } }}
                           placeholder={t('enter-city')}
+                          reactHookFormKey="city"
+                          setTrimmedValueOnBlurOrSubmit={setValue}
                         />
                       )}
                       name="city"
@@ -403,7 +428,7 @@ const KycForm = () => {
                     </FormLabel>
                     <Controller
                       render={({ field }) => (
-                        <TextField
+                        <TextFieldTrimmed
                           id="state"
                           error={Boolean(errors.state)}
                           helperText={errors.state?.message}
@@ -412,6 +437,8 @@ const KycForm = () => {
                           inputRef={field.ref}
                           placeholder={t('enter-state')}
                           sx={{ mb: { xs: 1, sm: 2.5 } }}
+                          reactHookFormKey="state"
+                          setTrimmedValueOnBlurOrSubmit={setValue}
                         />
                       )}
                       name="state"
@@ -427,7 +454,7 @@ const KycForm = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ display: 'flex', justifyContent: { md: 'right', xs: 'center' }, mt: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: { md: 'flex-end', xs: 'center' }, mt: 3 }}>
             <Button sx={{ flexGrow: { xs: 1, sm: 0 } }} type="submit">
               {loading ? <CircularProgress color="inherit" /> : t('complete-kyc')}
             </Button>

@@ -4,7 +4,9 @@ interface IFormControlLabelBorderedProps extends FormControlLabelProps {
   active: boolean;
 }
 
-export const FormControlLabelBordered = styled(FormControlLabel)<IFormControlLabelBorderedProps>(({ theme, active }) => {
+export const FormControlLabelBordered = styled(FormControlLabel, {
+  shouldForwardProp: (prop) => prop !== 'active',
+})<IFormControlLabelBorderedProps>(({ theme, active }) => {
   const primaryColor = theme.palette.primary.main;
   const inactiveTxtColor = theme.palette.grey[600];
   const darkerGrey = theme.palette.grey[600];
