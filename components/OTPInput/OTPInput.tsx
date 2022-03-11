@@ -43,7 +43,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
     if (e.key === 'Enter') {
       onEnterPressed();
     }
-    if (e.key === 'Backspace') setFocusOnInputAtIndex(index - 1);
+    if (e.key === 'Backspace') setTimeout(() => setFocusOnInputAtIndex(index - 1), 0);
     if (e.key === 'ArrowRight') setFocusOnInputAtIndex(index + 1);
     else if (e.key === 'ArrowLeft') setFocusOnInputAtIndex(index - 1);
   };
