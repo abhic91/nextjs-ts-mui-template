@@ -183,6 +183,7 @@ const Home: NextPage = () => {
       {showOTP && (
         <Box component="form" onSubmit={verifyOTP} autoComplete="off">
           <Slide direction="right" in={showOTP} container={otpContainerRef.current} mountOnEnter unmountOnExit>
+            {/* easing={{ enter: 'easeOut', exit: 'ease-in-out' }} */}
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Button
