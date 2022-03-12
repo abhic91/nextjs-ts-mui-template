@@ -182,7 +182,17 @@ const Home: NextPage = () => {
       )}
       {showOTP && (
         <Box component="form" onSubmit={verifyOTP} autoComplete="off">
-          <Slide direction="right" in={showOTP} container={otpContainerRef.current} mountOnEnter unmountOnExit>
+          <Slide
+            direction="right"
+            timeout={{ enter: 380 }}
+            in={showOTP}
+            easing={{
+              enter: 'cubic-bezier(.65,.53,.51,.65)',
+              exit: 'linear',
+            }}
+            container={otpContainerRef.current}
+            mountOnEnter
+            unmountOnExit>
             {/* easing={{ enter: 'easeOut', exit: 'ease-in-out' }} */}
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -211,16 +221,16 @@ const Home: NextPage = () => {
                   <FormHelperText error={isOTPError}>{otpErrMessage}</FormHelperText>
                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1 }}>
                     {showResendBtn ? (
-                      <Button size="small" sx={{ ml: 0.375 }} variant="link" onClick={onResendClick}>
+                      <Button size="small" variant="link" onClick={onResendClick} sx={{ minHeight: 'auto' }}>
                         {t('resend-otp')}
                       </Button>
                     ) : (
                       <>
-                        <FormHelperText sx={{ display: 'flex', alignItems: 'center' }}>
+                        <FormHelperText sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Typography variant="subtitle2" component="span">
                             {t('didnt-receive')}
                           </Typography>
-                          <Typography variant="lightgray" sx={{ ml: 0.5, display: 'flex', gap: 0.5 }}>
+                          <Typography variant="lightgray" sx={{ display: 'flex', gap: 0.5 }}>
                             <span> {t('resend-in')} </span>
                             <CountDownTimer restartTimerKey={restartTimerKey} startTimeInSeconds={60} onTimerDone={onTimerDone} />
                           </Typography>

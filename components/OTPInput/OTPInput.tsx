@@ -20,11 +20,13 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
   const [isError, setIsError] = useState<Boolean>(isErrorProp);
   const otpInputRefs = useRef<HTMLInputElement[]>([]);
 
-  const onInput = (val: string, indx: number) => {
+  const onInputChange = (val: string, indx: number) => {
     val = val.length > 1 ? val.slice(-1) : val;
-    if (val) setFocusOnInputAtIndex(indx + 1);
+    if (val) {
+      setFocusOnInputAtIndex(indx + 1);
+      setInpValues((inpValues) => inpValues.map((currentVal, i) => (indx === i ? val : currentVal)));
+    }
     // else setFocusOnInputAtIndex(indx - 1);
-    setInpValues((inpValues) => inpValues.map((currentVal, i) => (indx === i ? val : currentVal)));
   };
 
   const selectTypedText = (index: number) => {
@@ -42,8 +44,14 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
   const handleKeyUp = (e: KeyboardEvent<HTMLDivElement>, index: number) => {
     if (e.key === 'Enter') {
       onEnterPressed();
+      return;
     }
-    if (e.key === 'Backspace') setTimeout(() => setFocusOnInputAtIndex(index - 1), 0);
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      setInpValues((inpValues) => inpValues.map((currentVal, i) => (i === index ? '' : currentVal)));
+      setFocusOnInputAtIndex(index - 1);
+      return;
+    }
     if (e.key === 'ArrowRight') setFocusOnInputAtIndex(index + 1);
     else if (e.key === 'ArrowLeft') setFocusOnInputAtIndex(index - 1);
   };
@@ -85,7 +93,7 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
             inputProps={{ inputMode: 'numeric' }}
             onKeyUp={(e) => handleKeyUp(e, indx)}
             onFocus={() => selectTypedText(indx)}
-            onChange={(e) => onInput(e.target.value, indx)}
+            onChange={(e) => onInputChange(e.target.value, indx)}
             onPaste={(e) => onPaste(e)}></TextField>
         ))}
       </Box>
