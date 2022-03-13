@@ -22,11 +22,11 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
 
   const onInputChange = (val: string, indx: number) => {
     val = val.length > 1 ? val.slice(-1) : val;
+    setInpValues((inpValues) => inpValues.map((currentVal, i) => (indx === i ? val : currentVal)));
     if (val) {
       setFocusOnInputAtIndex(indx + 1);
-      setInpValues((inpValues) => inpValues.map((currentVal, i) => (indx === i ? val : currentVal)));
     }
-    // else setFocusOnInputAtIndex(indx - 1);
+    //  else setFocusOnInputAtIndex(indx - 1);
   };
 
   const selectTypedText = (index: number) => {
@@ -47,8 +47,8 @@ const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPresse
       return;
     }
     if (e.key === 'Backspace') {
-      e.preventDefault();
-      setInpValues((inpValues) => inpValues.map((currentVal, i) => (i === index ? '' : currentVal)));
+      // e.preventDefault();
+      // setInpValues((inpValues) => inpValues.map((currentVal, i) => (i === index ? '' : currentVal)));
       setFocusOnInputAtIndex(index - 1);
       return;
     }
