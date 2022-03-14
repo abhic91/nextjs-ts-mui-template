@@ -184,7 +184,7 @@ const Home: NextPage = () => {
         <Box component="form" onSubmit={verifyOTP} autoComplete="off">
           <Slide
             direction="right"
-            timeout={{ enter: 380 }}
+            timeout={{ enter: 320 }}
             in={showOTP}
             easing={{
               enter: 'cubic-bezier(.65,.53,.51,.65)',
