@@ -60,7 +60,7 @@ MyDocument.getInitialProps = async (ctx) => {
   const nonce = nanoid();
   let contentSecurityPolicy = '';
   if (process.env.NODE_ENV === 'production') {
-    contentSecurityPolicy = `default-src 'self'; style-src '${nonce}'; img-src 'self' data:;`;
+    contentSecurityPolicy = `default-src 'self'; style-src 'nonce-${nonce}'; img-src 'self' data:;`;
   } else {
     contentSecurityPolicy = `default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';  img-src 'self' data:;`;
   }
