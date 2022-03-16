@@ -60,9 +60,9 @@ MyDocument.getInitialProps = async (ctx) => {
   const nonce = nanoid();
   let contentSecurityPolicy = '';
   if (process.env.NODE_ENV === 'production') {
-    contentSecurityPolicy = `default-src 'self'; style-src 'nonce-${nonce}'; img-src 'self' data:;`;
+    contentSecurityPolicy = `default-src 'self'; style-src-elem 'nonce-${nonce}'; img-src 'self' data:;`;
   } else {
-    contentSecurityPolicy = `default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
+    contentSecurityPolicy = `default-src 'self'; style-src-elem 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
   }
   ctx.res?.setHeader('Content-Security-Policy', contentSecurityPolicy);
 
