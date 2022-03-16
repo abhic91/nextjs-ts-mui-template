@@ -13,6 +13,7 @@ export default class MyDocument extends Document {
         <Head nonce={nonce}>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
+          <meta httpEquiv="Content-Security-Policy" content={nonce} />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
           {(this.props as any).emotionStyleTags}
         </Head>
