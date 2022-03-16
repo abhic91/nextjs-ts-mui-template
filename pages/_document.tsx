@@ -3,6 +3,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
 import theme from '../theme/default.theme';
 import createEmotionCache from '../createEmotionCache';
+import { nanoid } from 'nanoid';
 
 export default class MyDocument extends Document {
   render() {
@@ -54,6 +55,15 @@ MyDocument.getInitialProps = async (ctx) => {
   // However, be aware that it can have global side effects.
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
+  const nonce = nanoid();
+  let contentSecurityPolicy = '';
+  if (process.env.NODE_ENV === 'production') {
+    contentSecurityPolicy = `default-src 'self'; style-src 'nonce-${nonce}';`;
+  } else {
+    contentSecurityPolicy = `default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-eval';`;
+  }
+  ctx.res?.setHeader('Content-Security-Policy', contentSecurityPolicy);
+  console.log(ctx.res, "ctx.res?.setHeader('Content-Security-Policy', contentSecurityPolicy);");
 
   ctx.renderPage = () =>
     originalRenderPage({
@@ -69,6 +79,7 @@ MyDocument.getInitialProps = async (ctx) => {
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
+      nonce={nonce}
       data-emotion={`${style.key} ${style.ids.join(' ')}`}
       key={style.key}
       // eslint-disable-next-line react/no-danger
@@ -79,5 +90,6 @@ MyDocument.getInitialProps = async (ctx) => {
   return {
     ...initialProps,
     emotionStyleTags,
+    nonce,
   };
 };

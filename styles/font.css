@@ -4,16 +4,19 @@
     url('../public/fonts/PPTelegraf-Bold.ttf') format('truetype'), url('../public/fonts/PPTelegraf-Bold.eot'),
     url('../public/fonts/PPTelegraf-Bold.otf');
   font-weight: 700;
+  font-display: swap;
 }
 @font-face {
   font-family: 'PPTelegraf';
   src: url('../public/fonts/PPTelegraf-Regular.woff2') format('woff2'),
     url('../public/fonts/PPTelegraf-Regular.woff') format('woff');
   font-weight: 400;
+  font-display: swap;
 }
 @font-face {
   font-family: 'PPTelegraf';
   src: url('../public/fonts/PPTelegraf-Medium.woff2') format('woff2'),
     url('../public/fonts/PPTelegraf-Medium.woff') format('woff');
   font-weight: 400;
+  font-display: swap;
 }
