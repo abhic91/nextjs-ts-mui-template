@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid';
 
 export default class MyDocument extends Document {
   render() {
-    const nonce = (this.props as any).nonce;
+    // const nonce = (this.props as any).nonce;
     return (
       <Html lang="en">
         <Head>
@@ -17,7 +17,6 @@ export default class MyDocument extends Document {
           {(this.props as any).emotionStyleTags}
         </Head>
         <body>
-          <script nonce={nonce}> </script>
           <Main />
           <NextScript />
         </body>
@@ -60,7 +59,7 @@ MyDocument.getInitialProps = async (ctx) => {
   const nonce = nanoid();
   let contentSecurityPolicy = '';
   if (process.env.NODE_ENV === 'production') {
-    contentSecurityPolicy = `default-src 'self'; style-src-elem 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src 'self' data:;`;
+    contentSecurityPolicy = `default-src 'self'; style-src-elem '${nonce}'; style-src 'unsafe-inline'; img-src 'self' data:;`;
   } else {
     contentSecurityPolicy = `default-src 'self'; style-src-elem 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
   }
