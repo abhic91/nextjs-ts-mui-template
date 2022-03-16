@@ -3,14 +3,15 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
 import theme from '../theme/default.theme';
 import createEmotionCache from '../createEmotionCache';
-// import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid';
 
 export default class MyDocument extends Document {
   render() {
-    // const nonce = (this.props as any).nonce;
+    const nonce = (this.props as any).nonce;
+    console.log((this.props as any).emotionStyleTags);
     return (
       <Html lang="en">
-        <Head>
+        <Head nonce={nonce}>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
@@ -18,7 +19,7 @@ export default class MyDocument extends Document {
         </Head>
         <body>
           <Main />
-          <NextScript />
+          <NextScript nonce={nonce} />
         </body>
       </Html>
     );
@@ -56,14 +57,14 @@ MyDocument.getInitialProps = async (ctx) => {
   // However, be aware that it can have global side effects.
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
-  // const nonce = nanoid();
-  // let contentSecurityPolicy = '';
-  // if (process.env.NODE_ENV === 'production') {
-  //   contentSecurityPolicy = `default-src 'self'; style-src-elem 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src 'self' data:;`;
-  // } else {
-  //   contentSecurityPolicy = `default-src 'self'; style-src-elem 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
-  // }
-  // ctx.res?.setHeader('Content-Security-Policy', contentSecurityPolicy);
+  const nonce = nanoid();
+  let contentSecurityPolicy = '';
+  if (process.env.NODE_ENV === 'production') {
+    contentSecurityPolicy = `default-src 'self'; style-src-elem 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src 'self' data:;`;
+  } else {
+    contentSecurityPolicy = `default-src 'self'; style-src-elem 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
+  }
+  ctx.res?.setHeader('Content-Security-Policy', contentSecurityPolicy);
 
   ctx.renderPage = () =>
     originalRenderPage({
@@ -79,6 +80,7 @@ MyDocument.getInitialProps = async (ctx) => {
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
+      nonce={nonce}
       data-emotion={`${style.key} ${style.ids.join(' ')}`}
       key={style.key}
       // eslint-disable-next-line react/no-danger
