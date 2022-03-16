@@ -18,7 +18,6 @@ export default class MyDocument extends Document {
           {(this.props as any).emotionStyleTags}
         </Head>
         <body>
-          <script nonce={nonce}> window.__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {}</script>
           <Main />
           <NextScript />
         </body>
