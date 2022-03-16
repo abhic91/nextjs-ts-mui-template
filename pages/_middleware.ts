@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export function middleware(req: NextRequest) {
+export function middleware() {
   //   setCookies('org-theme-key', 'org1', { req, res, maxAge: 60 * 6 * 24 });
-  console.log(req.cookies['org-theme-key']);
+  // console.log(req.cookies['org-theme-key']);
   return NextResponse.next().cookie('org-theme-key', 'default');
   // const { nextUrl: url } = req;
   // url.searchParams.set('org-theme-key', 'org1');
