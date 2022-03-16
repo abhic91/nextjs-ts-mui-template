@@ -13,7 +13,6 @@ export default class MyDocument extends Document {
         <Head nonce={nonce}>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
-          <meta property="csp-nonce" content={nonce} />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
           {(this.props as any).emotionStyleTags}
         </Head>
@@ -60,7 +59,7 @@ MyDocument.getInitialProps = async (ctx) => {
   const nonce = nanoid();
   let contentSecurityPolicy = '';
   if (process.env.NODE_ENV === 'production') {
-    contentSecurityPolicy = `default-src 'self'; style-src-elem 'nonce-${nonce}'; style-src 'nonce-${nonce}'; img-src 'self' data:;`;
+    contentSecurityPolicy = `default-src 'self'; style-src-elem 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src 'self' data:;`;
   } else {
     contentSecurityPolicy = `default-src 'self'; style-src-elem 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
   }
