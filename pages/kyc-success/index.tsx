@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useState } from 'react';
 import SuccessIcon from '../../components/Icons/SuccessIcon';
-import { topNavHeight } from '../../theme/theme';
+import { topNavHeight } from '../../theme/themes.constants';
 import classes from './index.module.css';
 
 const KycSuccess: NextPage = () => {

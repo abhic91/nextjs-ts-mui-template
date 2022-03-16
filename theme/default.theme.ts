@@ -1,20 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-const fontFamilies = [
-  'PPTelegraf',
-  '-apple-system',
-  'BlinkMacSystemFont',
-  'Segoe UI',
-  'Roboto',
-  'Oxygen',
-  'Ubuntu',
-  'Cantarell',
-  'Fira Sans',
-  'Droid Sans',
-  'Helvetica Neue',
-  'sans-serif',
-].join(',');
-
-export const topNavHeight = '55';
+import { fontFamilies, topNavHeight } from './themes.constants';
 
 const colorPalette = createTheme({
   palette: {
@@ -22,6 +7,7 @@ const colorPalette = createTheme({
       main: '#6E44FD',
       light: '#6e44fda8',
       dark: '#6036ec',
+      verylightprimary: '#dcd8e926',
     },
     secondary: {
       main: '#1976d2',

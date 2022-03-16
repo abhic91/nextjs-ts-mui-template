@@ -13,6 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { GetStaticProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useState } from 'react';
@@ -465,12 +466,12 @@ const KycForm = () => {
     </Fade>
   );
 };
-export async function getStaticProps({ locale }: { locale: string }) {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['kyc-form', 'common'])),
+      ...(await serverSideTranslations(locale!, ['kyc-form', 'common'])),
     },
   };
-}
+};
 
 export default KycForm;

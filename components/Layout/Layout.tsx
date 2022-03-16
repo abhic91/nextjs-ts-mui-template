@@ -1,13 +1,15 @@
 import { AppBar, Box } from '@mui/material';
 import BusinessLogo from '../BusinessLogo/BusinessLogo';
 import { ReactElement } from 'react';
-import { topNavHeight } from '../../theme/theme';
+import { topNavHeight } from '../../theme/themes.constants';
+import { useTheme } from '@mui/system';
 
 type LayoutProps = {
   children: ReactElement;
 };
 
 const Layout = ({ children }: LayoutProps) => {
+  const theme = useTheme();
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <AppBar
@@ -20,7 +22,9 @@ const Layout = ({ children }: LayoutProps) => {
         </Box>
         {/* <Box sx={{ minHeight: `${topNavHeight}px` }}></Box> */}
       </AppBar>
-      <Box sx={{ minHeight: `calc(100vh - ${topNavHeight}px)`, pt: { xs: 1, sm: 3 } }} style={{ backgroundColor: '#dcd8e926 ' }}>
+      <Box
+        sx={{ minHeight: `calc(100vh - ${topNavHeight}px)`, pt: { xs: 1, sm: 3 } }}
+        style={{ backgroundColor: theme.palette.primary.verylightprimary }}>
         {children}
       </Box>
     </Box>
