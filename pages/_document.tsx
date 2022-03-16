@@ -13,11 +13,11 @@ export default class MyDocument extends Document {
         <Head>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
-          <meta property="csp-nonce" content={nonce} />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
           {(this.props as any).emotionStyleTags}
         </Head>
         <body>
+          <script nonce={nonce}> </script>
           <Main />
           <NextScript />
         </body>
@@ -62,7 +62,7 @@ MyDocument.getInitialProps = async (ctx) => {
   if (process.env.NODE_ENV === 'production') {
     contentSecurityPolicy = `default-src 'self'; style-src 'nonce-${nonce}'; img-src 'self' data:;`;
   } else {
-    contentSecurityPolicy = `default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';  img-src 'self' data:;`;
+    contentSecurityPolicy = `default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'unsafe-inline';`;
   }
   ctx.res?.setHeader('Content-Security-Policy', contentSecurityPolicy);
 
@@ -80,7 +80,7 @@ MyDocument.getInitialProps = async (ctx) => {
   const emotionStyles = extractCriticalToChunks(initialProps.html);
   const emotionStyleTags = emotionStyles.styles.map((style) => (
     <style
-      nonce={`nonce-${nonce}`}
+      nonce={nonce}
       data-emotion={`${style.key} ${style.ids.join(' ')}`}
       key={style.key}
       // eslint-disable-next-line react/no-danger
