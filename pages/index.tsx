@@ -126,7 +126,7 @@ const Home: NextPage = () => {
 
   return (
     <Box
-      sx={{ py: 3, px: 3, borderRadius: 2, overflowX: 'hidden' }}
+      sx={{ py: 3, px: 3, borderRadius: 2, overflowX: 'hidden', borderTop: `5px solid`, borderTopColor: `primary.main` }}
       className={`${classes.verifyPageWrapper} custom-box-shadow-2`}
       ref={otpContainerRef}>
       {!showOTP && (
