@@ -73,8 +73,8 @@ const Home: NextPage = () => {
       const res = await registerWithBankApi({ mobile: `91${data.phoneNumber}` });
       setSessionId(res.data.sessionId);
       setLoading(false);
+      setShowOTP(true);
     } catch (error) {
-      setShowOTP(true); //TODO: REMOVE THIS
       setLoading(false);
       console.log(error);
       setSnackMessage(error?.response?.data?.message || 'An error occurred');
