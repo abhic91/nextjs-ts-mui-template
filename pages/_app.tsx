@@ -18,6 +18,7 @@ const clientSideEmotionCache = createEmotionCache();
 function App(props: AppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const [theme, setTheme] = useState(defaultTheme);
+
   useEffect(() => {
     (async () => {
       try {
