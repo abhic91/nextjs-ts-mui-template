@@ -1,32 +1,36 @@
 import { AppBar, Box } from '@mui/material';
-import BusinessLogo from '../BusinessLogo/BusinessLogo';
+import BusinessLogo from 'components/BusinessLogo/BusinessLogo';
+import Footer from 'components/Footer/Footer';
 import { ReactElement } from 'react';
-import { topNavHeight } from '../../theme/themes.constants';
-import { useTheme } from '@mui/system';
+import { topNavHeight } from 'theme/themes.constants';
+// import { useTheme } from '@mui/system';
+import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
+import styles from 'components/Layout/Layout.module.css';
 
 type LayoutProps = {
   children: ReactElement;
+  selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo;
 };
 
-const Layout = ({ children }: LayoutProps) => {
-  const theme = useTheme();
+const Layout = ({ children, selectedBusinessWhitelabelValues }: LayoutProps) => {
+  // const theme = useTheme();
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#e5e5e54f' }}>
       <AppBar
         position="sticky"
         elevation={0}
-        className={`custom-box-shadow-2`}
-        sx={{ backgroundColor: '#fff', height: `${topNavHeight}px`, borderRadius: 1.4 }}>
+        sx={{
+          backgroundColor: '#fff',
+          height: `${topNavHeight}px`,
+          boxShadow: `0px 2px 4px -2px rgba(16, 24, 40, 0.06), 0px 4px 8px -2px rgba(16, 24, 40, 0.1)`,
+        }}>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <BusinessLogo />
+          <BusinessLogo businessLogo={selectedBusinessWhitelabelValues.businessLogo} />
         </Box>
         {/* <Box sx={{ minHeight: `${topNavHeight}px` }}></Box> */}
       </AppBar>
-      <Box
-        sx={{ minHeight: `calc(100vh - ${topNavHeight}px)`, pt: { xs: 1, sm: 3 } }}
-        style={{ backgroundColor: theme.palette.primary.verylightprimary }}>
-        {children}
-      </Box>
+      <Box className={styles.contentWrapper}>{children}</Box>
+      <Footer {...selectedBusinessWhitelabelValues}></Footer>
     </Box>
   );
 };

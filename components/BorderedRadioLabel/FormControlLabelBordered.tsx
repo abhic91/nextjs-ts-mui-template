@@ -1,4 +1,4 @@
-import { FormControlLabel, FormControlLabelProps, styled } from '@mui/material';
+import { FormControlLabel, FormControlLabelProps, lighten, styled } from '@mui/material';
 
 interface IFormControlLabelBorderedProps extends FormControlLabelProps {
   active: boolean;
@@ -24,5 +24,23 @@ export const FormControlLabelBordered = styled(FormControlLabel, {
       border: `1px solid ${active ? primaryColor : darkerGrey}`,
       color: active ? primaryColor : inactiveTxtColor,
     },
+    '& .MuiRadio-root': {
+      'span:first-of-type': {
+        backgroundColor: active ? lighten(primaryColor, 0.9) : 'transparent',
+        borderRadius: '50%',
+        border: `1px solid ${active ? 'transparent' : lightGrey}`,
+      },
+      '& .MuiSvgIcon-root:first-of-type': {
+        fill: 'transparent',
+      },
+    },
+    // '& .MuiSvgIcon-root:first-of-type': {
+    //   fill: 'transparent',
+    // },
+    // '& .MuiSvgIcon-root': {
+    //   backgroundColor: active ? lighten(primaryColor, 0.96) : 'transparent',
+    //   borderRadius: '50%',
+    //   border: `1px solid ${active ? 'transparent' : theme.palette.grey[300]}`,
+    // },
   };
 });

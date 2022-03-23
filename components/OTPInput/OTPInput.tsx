@@ -1,13 +1,14 @@
 import { Box, TextField } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { KeyboardEvent, ClipboardEvent } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 type OTPInputProps = {
   noOfInputs: number;
   isDisabled?: Boolean;
   isErrorProp: Boolean;
   clearOTPKey?: number; //TODO:
-  setValue: Function; //function that sets value of parent's otp val state
+  setValue: Dispatch<SetStateAction<string>>; //function that sets value of parent's otp val state
   onEnterPressed: Function;
   //   inputTypeProp: '';
 };

@@ -1,15 +1,17 @@
 {
-  "phone-number": "Phone Number",
+  "phone-number": "Phone number",
+  "welcome": "Welcome",
   "enter-registered-phone-number": "Enter your registered phone number",
   "enter-10-digit-number": "Enter a valid 10 digit phone number",
   "send-otp": "Send OTP",
   "otp": "OTP",
   "enter-otp": "Enter the OTP sent to your phone number",
-  "didnt-receive": "Didn't receive OTP?",
+  "didnt-receive": "Didn't receive?",
   "resend-in": "Resend in",
   "resend-otp": "Resend OTP",
   "verify-otp": "Verify OTP",
   "invalid-otp": "The OTP you entered is invalid",
   "verified-successfully": "Your phone number has been verified successfully",
-  "ready-to-activate": "Ready to activate your card"
+  "ready-to-activate": "Ready to activate your card",
+  "two-steps": "You're 2 steps away to activate your card."
 }

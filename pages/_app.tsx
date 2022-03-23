@@ -1,36 +1,44 @@
 // import PropTypes from 'prop-types';
 import Head from 'next/head';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { CacheProvider } from '@emotion/react';
-import defaultTheme from '../theme/default.theme';
-import createEmotionCache from '../createEmotionCache';
-import { AppProps } from 'next/dist/shared/lib/router/router';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import createEmotionCache from 'createEmotionCache';
 import { appWithTranslation } from 'next-i18next';
-import '../styles/font.css';
-import '../styles/globals.css';
-import Layout from '../components/Layout/Layout';
-import { useEffect, useState } from 'react';
-import { getCookie } from 'cookies-next';
+import 'styles/font.css';
+import 'styles/globals.css';
+import Layout from 'components/Layout/Layout';
+import App, { AppContext, AppProps } from 'next/app';
+import allThemes from 'theme';
+import { useState } from 'react';
+import whitelabel, { T_WhitelabelBusinessKeys } from 'whitelabel/whitelabel';
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
-function App(props: AppProps) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const [theme, setTheme] = useState(defaultTheme);
+MyApp.getInitialProps = async (appContext: AppContext) => {
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  const appProps = await App.getInitialProps(appContext);
+  const selectedBusinessWhitelabelKey = getWhitelabelKeyFromHostname(appContext.ctx.req?.headers.host || '');
+  console.log(selectedBusinessWhitelabelKey, appContext.ctx.req?.headers.host, 'selectedBusinessWhitelabelKey');
+  const selectedBusinessWhitelabelValues = whitelabel[selectedBusinessWhitelabelKey];
+  console.log(selectedBusinessWhitelabelValues, whitelabel, 'whitelabe');
+  return {
+    ...appProps,
+    selectedBusinessWhitelabelValues,
+    themeObj: allThemes['policyBoss'],
+  };
+};
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const orgThemeKey = getCookie('org-theme-key');
-        const orgTheme = await import(`../theme/${orgThemeKey}.theme.ts`);
-        setTheme(orgTheme.default || defaultTheme);
-      } catch (error) {
-        console.log(error);
-        setTheme(defaultTheme);
-      }
-    })();
-  }, []);
+const getWhitelabelKeyFromHostname = (host: string): T_WhitelabelBusinessKeys => {
+  if (!host) return 'default';
+  const hostname = host.split(':')[0] || '';
+  return (Object.keys(whitelabel).find((key) => hostname.toLowerCase().includes(key.toLowerCase())) ||
+    'default') as T_WhitelabelBusinessKeys;
+};
+
+function MyApp(props: AppProps & { emotionCache: EmotionCache; [key: string]: any }) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps, themeObj, selectedBusinessWhitelabelValues } = props;
+  const [theme] = useState(createTheme(themeObj));
 
   return (
     <CacheProvider value={emotionCache}>
@@ -40,11 +48,11 @@ function App(props: AppProps) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Layout>
-          <Component {...pageProps} />
+        <Layout selectedBusinessWhitelabelValues={selectedBusinessWhitelabelValues}>
+          <Component {...pageProps} selectedBusinessWhitelabelValues={selectedBusinessWhitelabelValues} />
         </Layout>
       </ThemeProvider>
     </CacheProvider>
   );
 }
-export default appWithTranslation(App);
+export default appWithTranslation(MyApp);

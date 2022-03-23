@@ -11,19 +11,26 @@ import {
   RadioGroup,
   Snackbar,
   TextField,
+  Typography,
+  useMediaQuery,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { GetStaticProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState, ReactNode, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { submitKYCDetailsApi } from '../../api-requests/verify';
-import { FormControlLabelBordered } from '../../components/BorderedRadioLabel/FormControlLabelBordered';
-import DatePickerLocalised from '../../components/DatePickerLocalised/DatePickerLocalised';
-import CalendarIcon from '../../components/Icons/CalendarIcon';
-import TextFieldTrimmed from '../../components/TextFieldTrimmed/TextFieldTrimmed';
-import classes from './index.module.css';
+import { submitKYCDetailsApi } from 'api-requests/submit-kyc';
+import { FormControlLabelBordered } from 'components/BorderedRadioLabel/FormControlLabelBordered';
+import DatePickerLocalised from 'components/DatePickerLocalised/DatePickerLocalised';
+import CalendarIcon from 'components/Icons/CalendarIcon';
+import TextFieldTrimmed from 'components/TextFieldTrimmed/TextFieldTrimmed';
+import classes from 'pages/kyc/index.module.css';
+import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useTheme } from '@mui/material';
 
 export enum IDType {
   // eslint-disable-next-line no-unused-vars
@@ -49,15 +56,26 @@ export type TKYCForm = {
   address: string;
   pinCode: string;
   gender: GENDER;
-  city: string;
-  state: string;
+};
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, ['kyc-form', 'common'])),
+    },
+  };
 };
 
-const KycForm = () => {
+const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo }) => {
   const { t } = useTranslation(['kyc-form', 'common']);
+  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
+  const themeHook = useTheme();
+  const isXs = useMediaQuery(themeHook.breakpoints.down('sm'));
+  const imgContainerRef = useRef<HTMLDivElement>(null);
+  const [formHeight, setFormHeight] = useState('100%');
+
   const {
     handleSubmit,
     control,
@@ -76,27 +94,31 @@ const KycForm = () => {
       panNumber: '',
       aadhaarNumber: '',
       gender: GENDER.Male,
-      city: '',
-      state: '',
     },
   });
 
   const submitForm = async (data: TKYCForm) => {
     try {
       setLoading(true);
-      data = { ...data, dob: dayjs(data.dob).format('YYYY-MM-DD') };
+      data = { ...data, dob: dayjs(data.dob).format('YYYY-MM-DD'), mobile: localStorage.getItem('mobile')! };
       const res = await submitKYCDetailsApi(data);
       setLoading(false);
       console.log(res);
+      router.replace('/kyc-success');
     } catch (error) {
       setLoading(false);
       setSnackMessage(error.response?.data?.message || t('an-error-occurred', { ns: 'common' }));
       console.log(error);
     }
   };
+  const isMobileVerificationDone = () => localStorage.getItem('mobile') !== null;
   useEffect(() => {
+    if (!isMobileVerificationDone()) {
+      router.replace('/');
+      return;
+    }
     setShowForm(true);
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (snackMessage)
@@ -104,374 +126,341 @@ const KycForm = () => {
         setSnackMessage('');
       }, 3000);
   }, [snackMessage]);
-
+  useEffect(() => {
+    if (!isXs) {
+      setFormHeight(imgContainerRef.current?.querySelector('img')?.height + 'px');
+    } else {
+      setFormHeight('100%');
+    }
+  }, [isXs]);
   return (
-    <Fade in={showForm} timeout={{ enter: 500 }}>
-      <Box
-        sx={{
-          display: 'grid',
-          placeContent: 'center',
-        }}>
-        <Box
-          className={`custom-box-shadow-2 ${classes.kycFormWrapper}`}
-          sx={{ pt: 4, pb: 3, px: { xs: 3, md: 7 }, borderRadius: 2 }}
-          component="form"
-          onSubmit={handleSubmit(submitForm)}>
-          <Grid container columnSpacing={6} rowSpacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel sx={{ mb: 1 }} id="idTypeLbl" htmlFor="idType">
-                  {t('choose-type')}
-                </FormLabel>
-                <Controller
-                  control={control}
-                  render={({ field }) => (
-                    <RadioGroup
-                      id="idType"
-                      aria-labelledby="idTypeLbl"
-                      value={field.value}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        trigger('panNumber');
-                        trigger('aadhaarNumber');
-                      }}
-                      name="idType"
-                      sx={{ gap: 1.5, pl: 1.5 }}
-                      row>
-                      <FormControlLabelBordered
-                        value={IDType.PAN}
-                        control={<Radio />}
-                        label="PAN"
-                        active={field.value === IDType.PAN}
-                      />
-                      <FormControlLabelBordered
-                        active={field.value === IDType.AADHAAR}
-                        value={IDType.AADHAAR}
-                        control={<Radio />}
-                        label="Aadhaar"
-                      />
-                    </RadioGroup>
-                  )}
-                  name="idType"></Controller>
-              </FormControl>
-            </Grid>
-            <Grid item sm={6} xs={12}>
-              <FormControl fullWidth>
-                {getValues().idType === IDType.PAN && (
-                  <>
-                    <FormLabel sx={{ mb: 1 }} id="panNumberLbl" htmlFor="panNumber">
-                      {t('PAN')}
-                    </FormLabel>
-                    <Controller
-                      render={({ field }) => (
-                        <TextFieldTrimmed
-                          id="panNumber"
-                          error={Boolean(errors.panNumber)}
-                          helperText={errors.panNumber?.message}
-                          value={field.value}
-                          onChange={field.onChange}
-                          inputRef={field.ref}
-                          placeholder={t('enter-pan')}
-                          sx={{ mb: { xs: 1, sm: 2.5 } }}
-                          reactHookFormKey="panNumber"
-                          setTrimmedValueOnBlurOrSubmit={setValue}
-                        />
-                      )}
-                      name="panNumber"
-                      control={control}
-                      rules={{
-                        validate: {
-                          required: (val) => (getValues('idType') === IDType.PAN && !val ? t<string>('enter-pan') : true),
-                        },
-                        pattern: { value: /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, message: t('enter-valid-pan') },
-                      }}
-                    />
-                  </>
-                )}
-                {getValues().idType == IDType.AADHAAR && (
-                  <>
-                    <FormLabel sx={{ mb: 1 }} id="aadhaarNumberLbl" htmlFor="aadhaarNumber">
-                      {t('aadhaar')}
-                    </FormLabel>
-                    <Controller
-                      render={({ field }) => (
-                        <TextFieldTrimmed
-                          id="aadhaarNumber"
-                          error={Boolean(errors.aadhaarNumber)}
-                          helperText={errors.aadhaarNumber?.message}
-                          value={field.value}
-                          onChange={field.onChange}
-                          inputRef={field.ref}
-                          placeholder={t('enter-aadhaar')}
-                          sx={{ mb: { xs: 1, sm: 2.5 } }}
-                          reactHookFormKey="aadhaarNumber"
-                          setTrimmedValueOnBlurOrSubmit={setValue}
-                        />
-                      )}
-                      name="aadhaarNumber"
-                      control={control}
-                      rules={{
-                        validate: {
-                          required: (val) => (getValues('idType') === IDType.AADHAAR && !val ? t<string>('enter-aadhaar') : true),
-                        },
-                        pattern: { value: /^\d+$/, message: t('enter-valid-aadhaar') },
-                        minLength: { value: 12, message: t('enter-valid-aadhaar') },
-                        maxLength: { value: 12, message: t('enter-valid-aadhaar') },
-                      }}
-                    />
-                  </>
-                )}
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel sx={{ mb: 1 }} id="nameLbl" htmlFor="name">
-                  {t('name')}
-                </FormLabel>
-                <Controller
-                  render={({ field }) => (
-                    <TextFieldTrimmed
-                      id="name"
-                      error={Boolean(errors.name)}
-                      helperText={errors.name?.message}
-                      value={field.value}
-                      onChange={field.onChange}
-                      inputRef={field.ref}
-                      placeholder={t('enter-full-name')}
-                      sx={{ mb: { xs: 1, sm: 2.5 } }}
-                      reactHookFormKey="name"
-                      setTrimmedValueOnBlurOrSubmit={setValue}
-                    />
-                  )}
-                  name="name"
-                  control={control}
-                  rules={{
-                    required: { value: true, message: t<string>('enter-your-name') },
-                    minLength: { value: 2, message: t('enter-valid-name-min') },
-                    maxLength: { value: 200, message: t('enter-valid-name-max') },
-                  }}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} sx={{ mb: { xs: 1, sm: 2.5 } }}>
-              <FormControl fullWidth>
-                <FormLabel sx={{ mb: 1 }} id="genderLbl" htmlFor="gender">
-                  {t('gender')}
-                </FormLabel>
-                <Controller
-                  control={control}
-                  render={({ field }) => (
-                    <RadioGroup
-                      id="gender"
-                      aria-labelledby="genderLbl"
-                      value={field.value}
-                      onChange={field.onChange}
-                      name="gender"
-                      sx={{ gap: 1.5, pl: 1.5 }}
-                      row>
-                      <FormControlLabelBordered
-                        active={field.value === GENDER.Male}
-                        value={GENDER.Male}
-                        control={<Radio />}
-                        label={t<string>('male')}
-                      />
-                      <FormControlLabelBordered
-                        active={field.value === GENDER.Female}
-                        value={GENDER.Female}
-                        control={<Radio />}
-                        label={t<string>('female')}
-                      />
-                    </RadioGroup>
-                  )}
-                  name="gender"></Controller>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel sx={{ mb: 1 }} id="dobLbl" htmlFor="dob">
-                  {t('dob')}
-                </FormLabel>
-                <Controller
-                  control={control}
-                  render={({ field }) => (
-                    <DatePickerLocalised
-                      aria-labelledby="dobLbl"
-                      value={field.value}
-                      inputFormat="DD/MM/YYYY"
-                      renderInput={(params) => (
-                        <TextField
-                          sx={{ mb: { xs: 1, sm: 2.5 } }}
-                          helperText={errors.dob?.message}
-                          {...params}
-                          error={Boolean(errors.dob?.message)}
-                        />
-                      )}
-                      maxDate={dayjs()}
-                      onChange={field.onChange}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="start">
-                            {' '}
-                            <CalendarIcon />
-                          </InputAdornment>
-                        ),
-                      }}></DatePickerLocalised>
-                  )}
-                  rules={{
-                    required: { value: true, message: t<string>('enter-valid-dob') },
-                    validate: {
-                      validDob: (val) => {
-                        const dob = dayjs(val);
-                        return (dob.isValid() && dob.isBefore(dayjs())) || t<string>('enter-valid-dob');
-                      },
-                    },
-                  }}
-                  name="dob"></Controller>
-              </FormControl>
-            </Grid>
+    <>
+      <Head>
+        <title>{`${props.selectedBusinessWhitelabelValues.businessName} - Submit KYC Details`}</title>
+      </Head>
+      <Fade in={showForm} timeout={{ enter: 500 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
+          {props.selectedBusinessWhitelabelValues.bgImage && !isXs && (
+            <Box
+              sx={{ width: { xs: '100vw', sm: 'auto' }, p: 0, m: 0, flexBasis: { sm: '50%' } }}
+              className="imageWrapper"
+              ref={imgContainerRef}>
+              <Image
+                src={`/${props.selectedBusinessWhitelabelValues.bgImage}`}
+                layout="responsive"
+                width="100%"
+                height="100%"
+                objectFit="cover"
+                alt="card-image"
+                priority
+              />
+            </Box>
+          )}
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel sx={{ mb: 1 }} id="addressLbl" htmlFor="address">
-                  {t('address')}
-                </FormLabel>
-                <Controller
-                  render={({ field }) => (
-                    <TextFieldTrimmed
-                      id="address"
-                      error={Boolean(errors.address)}
-                      helperText={errors.address?.message}
-                      value={field.value}
-                      onChange={field.onChange}
-                      inputRef={field.ref}
-                      placeholder={t('enter-address')}
-                      sx={{ mb: { xs: 1, sm: 2.5 } }}
-                      reactHookFormKey="address"
-                      setTrimmedValueOnBlurOrSubmit={setValue}
-                    />
+          <Box
+            className={` ${classes.kycFormWrapper}`}
+            sx={{
+              pt: 4,
+              pb: 3,
+              px: { xs: 2, md: 2 },
+              borderRadius: 2,
+              flexBasis: { xs: '100%', sm: '50%' },
+              maxHeight: formHeight,
+              overflow: 'scroll',
+            }}
+            component="form"
+            onSubmit={handleSubmit(submitForm)}>
+            <Grid container columnSpacing={6} rowSpacing={2}>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <Typography sx={{ mb: 2, fontWeight: 700 }} id="idTypeLbl" variant="h5">
+                    {t('finish-kyc')}
+                  </Typography>
+                  <Controller
+                    control={control}
+                    render={({ field }) => (
+                      <RadioGroup
+                        id="idType"
+                        aria-labelledby="idTypeLbl"
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          trigger('panNumber');
+                          trigger('aadhaarNumber');
+                        }}
+                        name="idType"
+                        sx={{ gap: 1.5, pl: 1.5 }}
+                        row>
+                        <FormControlLabelBordered
+                          value={IDType.PAN}
+                          control={<Radio />}
+                          label="PAN"
+                          active={field.value === IDType.PAN}
+                        />
+                        <FormControlLabelBordered
+                          active={field.value === IDType.AADHAAR}
+                          value={IDType.AADHAAR}
+                          control={<Radio />}
+                          label="Aadhaar"
+                        />
+                      </RadioGroup>
+                    )}
+                    name="idType"></Controller>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  {getValues().idType === IDType.PAN && (
+                    <>
+                      <FormLabel sx={{ mb: 1 }} id="panNumberLbl" htmlFor="panNumber">
+                        {t('PAN')}
+                      </FormLabel>
+                      <Controller
+                        render={({ field }) => (
+                          <TextFieldTrimmed
+                            id="panNumber"
+                            error={Boolean(errors.panNumber)}
+                            helperText={errors.panNumber?.message}
+                            value={field.value}
+                            onChange={field.onChange}
+                            inputRef={field.ref}
+                            placeholder={t('enter-pan')}
+                            sx={{ mb: { xs: 1, sm: 2.5 } }}
+                            reactHookFormKey="panNumber"
+                            setTrimmedValueOnBlurOrSubmit={setValue}
+                          />
+                        )}
+                        name="panNumber"
+                        control={control}
+                        rules={{
+                          validate: {
+                            required: (val) => (getValues('idType') === IDType.PAN && !val ? t<string>('enter-pan') : true),
+                          },
+                          pattern: { value: /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, message: t('enter-valid-pan') },
+                        }}
+                      />
+                    </>
                   )}
-                  name="address"
-                  control={control}
-                  rules={{
-                    required: { value: true, message: t<string>('enter-address') },
-                    minLength: { value: 6, message: t<string>('enter-valid-address') },
-                  }}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={6} sm={4}>
-                  <FormControl fullWidth>
-                    <FormLabel sx={{ mb: 1 }} id="pinCodeLbl" htmlFor="pinCode">
-                      {t('pin')}
-                    </FormLabel>
-                    <Controller
-                      render={({ field }) => (
-                        <TextFieldTrimmed
-                          id="pinCode"
-                          error={Boolean(errors.pinCode)}
-                          helperText={errors.pinCode?.message}
-                          value={field.value}
-                          type="number"
-                          onChange={field.onChange}
-                          inputRef={field.ref}
-                          placeholder={t('enter-pin')}
-                          sx={{ mb: { xs: 1, sm: 2.5 } }}
-                          reactHookFormKey="pinCode"
-                          setTrimmedValueOnBlurOrSubmit={setValue}
+                  {getValues().idType == IDType.AADHAAR && (
+                    <>
+                      <FormLabel sx={{ mb: 1 }} id="aadhaarNumberLbl" htmlFor="aadhaarNumber">
+                        {t('aadhaar')}
+                      </FormLabel>
+                      <Controller
+                        render={({ field }) => (
+                          <TextFieldTrimmed
+                            id="aadhaarNumber"
+                            error={Boolean(errors.aadhaarNumber)}
+                            helperText={errors.aadhaarNumber?.message}
+                            value={field.value}
+                            onChange={field.onChange}
+                            inputRef={field.ref}
+                            placeholder={t('enter-aadhaar')}
+                            sx={{ mb: { xs: 1, sm: 2.5 } }}
+                            reactHookFormKey="aadhaarNumber"
+                            setTrimmedValueOnBlurOrSubmit={setValue}
+                          />
+                        )}
+                        name="aadhaarNumber"
+                        control={control}
+                        rules={{
+                          validate: {
+                            required: (val) =>
+                              getValues('idType') === IDType.AADHAAR && !val ? t<string>('enter-aadhaar') : true,
+                          },
+                          pattern: { value: /^\d+$/, message: t('enter-valid-aadhaar') },
+                          minLength: { value: 12, message: t('enter-valid-aadhaar') },
+                          maxLength: { value: 12, message: t('enter-valid-aadhaar') },
+                        }}
+                      />
+                    </>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }} id="nameLbl" htmlFor="name">
+                    {getValues().idType === 'PAN' ? t('name-on-pan') : t('name-on-aadhaar')}
+                  </FormLabel>
+                  <Controller
+                    render={({ field }) => (
+                      <TextFieldTrimmed
+                        id="name"
+                        error={Boolean(errors.name)}
+                        helperText={errors.name?.message}
+                        value={field.value}
+                        onChange={field.onChange}
+                        inputRef={field.ref}
+                        placeholder={getValues().idType === 'PAN' ? t('name-on-pan') : t('name-on-aadhaar')}
+                        sx={{ mb: { xs: 1, sm: 2.5 } }}
+                        reactHookFormKey="name"
+                        setTrimmedValueOnBlurOrSubmit={setValue}
+                      />
+                    )}
+                    name="name"
+                    control={control}
+                    rules={{
+                      required: { value: true, message: t<string>('enter-your-name') },
+                      minLength: { value: 2, message: t('enter-valid-name-min') },
+                      maxLength: { value: 200, message: t('enter-valid-name-max') },
+                    }}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sx={{ mb: { xs: 1, sm: 2.5 } }}>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }} id="genderLbl" htmlFor="gender">
+                    {t('gender')}
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    render={({ field }) => (
+                      <RadioGroup
+                        id="gender"
+                        aria-labelledby="genderLbl"
+                        value={field.value}
+                        onChange={field.onChange}
+                        name="gender"
+                        sx={{ gap: 1.5, pl: 1.5 }}
+                        row>
+                        <FormControlLabelBordered
+                          active={field.value === GENDER.Male}
+                          value={GENDER.Male}
+                          control={<Radio />}
+                          label={t<string>('male')}
                         />
-                      )}
-                      name="pinCode"
-                      control={control}
-                      rules={{
-                        required: { value: true, message: t<string>('enter-pin') },
-                        minLength: { value: 6, message: t<string>('enter-valid-pin') },
-                        maxLength: { value: 6, message: t<string>('enter-valid-pin') },
-                        pattern: { value: /^\d+$/, message: t('enter-valid-pin') },
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={6} sm={4}>
-                  <FormControl fullWidth>
-                    <FormLabel sx={{ mb: 1 }} id="cityLbl" htmlFor="city">
-                      {t('city')}
-                    </FormLabel>
-                    <Controller
-                      render={({ field }) => (
-                        <TextFieldTrimmed
-                          id="city"
-                          error={Boolean(errors.city)}
-                          helperText={errors.city?.message}
-                          value={field.value}
-                          onChange={field.onChange}
-                          inputRef={field.ref}
-                          sx={{ mb: { xs: 1, sm: 2.5 } }}
-                          placeholder={t('enter-city')}
-                          reactHookFormKey="city"
-                          setTrimmedValueOnBlurOrSubmit={setValue}
+                        <FormControlLabelBordered
+                          active={field.value === GENDER.Female}
+                          value={GENDER.Female}
+                          control={<Radio />}
+                          label={t<string>('female')}
                         />
-                      )}
-                      name="city"
-                      control={control}
-                      rules={{
-                        required: { value: true, message: t<string>('enter-valid-city') },
-                        minLength: { value: 2, message: t<string>('enter-valid-city') },
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <FormControl fullWidth>
-                    <FormLabel sx={{ mb: 1 }} id="stateLbl" htmlFor="state">
-                      {t('state')}
-                    </FormLabel>
-                    <Controller
-                      render={({ field }) => (
-                        <TextFieldTrimmed
-                          id="state"
-                          error={Boolean(errors.state)}
-                          helperText={errors.state?.message}
-                          value={field.value}
-                          onChange={field.onChange}
-                          inputRef={field.ref}
-                          placeholder={t('enter-state')}
-                          sx={{ mb: { xs: 1, sm: 2.5 } }}
-                          reactHookFormKey="state"
-                          setTrimmedValueOnBlurOrSubmit={setValue}
-                        />
-                      )}
-                      name="state"
-                      control={control}
-                      rules={{
-                        required: { value: true, message: t<string>('enter-valid-state') },
-                        minLength: { value: 2, message: t<string>('enter-valid-state') },
-                      }}
-                    />
-                  </FormControl>
-                </Grid>
+                      </RadioGroup>
+                    )}
+                    name="gender"></Controller>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }} id="dobLbl" htmlFor="dob">
+                    {t('dob')}
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    render={({ field }) => (
+                      <DatePickerLocalised
+                        aria-labelledby="dobLbl"
+                        value={field.value}
+                        inputFormat="DD/MM/YYYY"
+                        renderInput={(params) => (
+                          <TextField
+                            sx={{ mb: { xs: 1, sm: 2.5 } }}
+                            helperText={errors.dob?.message}
+                            {...params}
+                            error={Boolean(errors.dob?.message)}
+                          />
+                        )}
+                        maxDate={dayjs()}
+                        onChange={field.onChange}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              {' '}
+                              <CalendarIcon />
+                            </InputAdornment>
+                          ),
+                        }}></DatePickerLocalised>
+                    )}
+                    rules={{
+                      required: { value: true, message: t<string>('enter-valid-dob') },
+                      validate: {
+                        validDob: (val) => {
+                          const dob = dayjs(val);
+                          return (dob.isValid() && dob.isBefore(dayjs())) || t<string>('enter-valid-dob');
+                        },
+                      },
+                    }}
+                    name="dob"></Controller>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }} id="addressLbl" htmlFor="address">
+                    {t('address')}
+                  </FormLabel>
+                  <Controller
+                    render={({ field }) => (
+                      <TextFieldTrimmed
+                        multiline
+                        rows={4}
+                        id="address"
+                        error={Boolean(errors.address)}
+                        helperText={errors.address?.message}
+                        value={field.value}
+                        onChange={field.onChange}
+                        inputRef={field.ref}
+                        placeholder={t('enter-address')}
+                        sx={{ mb: { xs: 1, sm: 2.5 } }}
+                        reactHookFormKey="address"
+                        setTrimmedValueOnBlurOrSubmit={setValue}
+                        autoComplete="off"
+                      />
+                    )}
+                    name="address"
+                    control={control}
+                    rules={{
+                      required: { value: true, message: t<string>('enter-address') },
+                      minLength: { value: 6, message: t<string>('enter-valid-address') },
+                    }}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel sx={{ mb: 1 }} id="pinCodeLbl" htmlFor="pinCode">
+                    {t('pin')}
+                  </FormLabel>
+                  <Controller
+                    render={({ field }) => (
+                      <TextFieldTrimmed
+                        id="pinCode"
+                        error={Boolean(errors.pinCode)}
+                        helperText={errors.pinCode?.message}
+                        value={field.value}
+                        type="number"
+                        onChange={field.onChange}
+                        inputRef={field.ref}
+                        placeholder={t('enter-pin')}
+                        sx={{ mb: { xs: 1, sm: 2.5 } }}
+                        reactHookFormKey="pinCode"
+                        setTrimmedValueOnBlurOrSubmit={setValue}
+                      />
+                    )}
+                    name="pinCode"
+                    control={control}
+                    rules={{
+                      required: { value: true, message: t<string>('enter-pin') },
+                      minLength: { value: 6, message: t<string>('enter-valid-pin') },
+                      maxLength: { value: 6, message: t<string>('enter-valid-pin') },
+                      pattern: { value: /^\d+$/, message: t('enter-valid-pin') },
+                    }}
+                  />
+                </FormControl>
               </Grid>
             </Grid>
-          </Grid>
 
-          <Box sx={{ display: 'flex', justifyContent: { md: 'flex-end', xs: 'center' }, mt: 3 }}>
-            <Button sx={{ flexGrow: { xs: 1, sm: 0 } }} type="submit">
-              {loading ? <CircularProgress color="inherit" /> : t('complete-kyc')}
-            </Button>
+            <Box sx={{ display: 'flex', justifyContent: { md: 'flex-end', xs: 'center' }, mt: 3 }}>
+              <Button sx={{ flexGrow: { xs: 1, sm: 0 } }} type="submit" disabled={loading}>
+                {loading ? <CircularProgress color="inherit" /> : t('complete-kyc')}
+              </Button>
+            </Box>
+            <Snackbar open={Boolean(snackMessage)} message={snackMessage}></Snackbar>
           </Box>
-          <Snackbar open={Boolean(snackMessage)} message={snackMessage}></Snackbar>
         </Box>
-      </Box>
-    </Fade>
+      </Fade>
+    </>
   );
-};
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale!, ['kyc-form', 'common'])),
-    },
-  };
 };
 
 export default KycForm;

@@ -1,5 +1,6 @@
 {
   "choose-type": "Choose your ID type to complete the KYC",
+  "finish-kyc": "Finish KYC",
   "PAN": "PAN",
   "aadhaar": "Aadhaar Number",
   "enter-pan": "Enter PAN",
@@ -11,7 +12,8 @@
   "enter-valid-name-max": "Enter a valid name(max: 200 characters)",
   "complete-kyc": "Complete KYC",
   "name": "Full Name",
-  "enter-full-name": "Enter your Full Name",
+  "name-on-pan": "Name on PAN card",
+  "name-on-aadhaar": "Name on Aadhaar card",
   "dob": "Date of Birth",
   "year": "Year",
   "month": "Month",

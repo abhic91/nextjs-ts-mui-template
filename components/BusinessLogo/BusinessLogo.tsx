@@ -1,15 +1,9 @@
 import Image from 'next/image';
 
-const BusinessLogo = () => {
+const BusinessLogo = ({ businessLogo }: { businessLogo: string }) => {
   return (
     <>
-      <Image
-        width={90}
-        height={60}
-        objectFit="contain"
-        src="https://www.card91.io/wp-content/uploads/2021/02/mobileLogo.png"
-        alt="logo"
-      />
+      <Image width={90} height={60} objectFit="contain" src={`/${businessLogo}`} alt="logo" />
     </>
   );
 };

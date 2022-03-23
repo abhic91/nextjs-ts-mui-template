@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import classes from './CountDownTimer.module.css';
+import classes from 'components/CountDownTimer/CountDownTimer.module.css';
 
 dayjs.extend(duration);
 type CountDownTimerProps = {

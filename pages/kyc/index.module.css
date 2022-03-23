@@ -1,21 +1,5 @@
 .kycFormWrapper {
-  width: 60vw;
+  /* width: 60vw; */
   margin: auto;
   background-color: var(--default-bg);
-}
-@media screen and (max-width: 1919px) {
-  .kycFormWrapper {
-    width: 70vw;
-    margin: auto;
-  }
-}
-@media screen and (max-width: 1200px) {
-  .kycFormWrapper {
-    width: 90vw;
-  }
-}
-@media screen and (max-width: 900px) {
-  .kycFormWrapper {
-    width: 99vw;
-  }
 }

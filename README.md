@@ -1,12 +1,11 @@
-## nextjs-ts-mui-template
-
+## Card91 KYC Web portal
 This is a [Next.js](https://nextjs.org/) project bootstrapped with
-[`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) using
+[`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) that uses
 
 - TypeScript
 - [React MaterialUI](https://mui.com/)
 - [react-i18next](https://github.com/i18next/react-i18next) for internationalization with nextjs
-- ESLint with default [nextjs eslint](https://nextjs.org/docs/basic-features/eslint),
+- ESLint with [default nextjs eslint config](https://nextjs.org/docs/basic-features/eslint),
   [eslint-plugin-jsx-a11y](https://www.npmjs.com/package/eslint-plugin-jsx-a11y), eslint:recommended.
 
 ## Getting Started

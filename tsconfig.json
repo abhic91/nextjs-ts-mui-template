@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "useUnknownInCatchVariables": false,
+    "baseUrl": "."
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_document.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

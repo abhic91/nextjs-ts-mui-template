@@ -1,31 +1,22 @@
-import { createTheme } from '@mui/material/styles';
-import { fontFamilies, topNavHeight } from 'theme/themes.constants';
+import defaultTheme from 'theme/default.theme';
+import { topNavHeight } from 'theme/themes.constants';
 
-const colorPalette = createTheme({
+const spiceMoneyColorPalette = {
   palette: {
     primary: {
-      main: '#6E44FD',
-      light: '#6e44fda8',
-      dark: '#6036ec',
-      verylightprimary: '#dcd8e926',
+      // main: '#ce8686',
+      main: '#e12726',
+      light: '#ce86869c',
+      dark: '#d73030',
+      verylightprimary: '#ce86860f',
     },
-    secondary: {
-      main: '#1976d2',
-      light: '#42a5f5',
-      dark: '#1565c0',
-    },
-    text: {
-      primary: '#070719',
-      secondary: '#393947',
-    },
-    background: { default: '#fff' },
   },
-});
-const defaultTheme = {
-  ...colorPalette,
+};
+
+const spiceMoneyTheme = {
+  ...spiceMoneyColorPalette,
   typography: {
-    fontFamily: fontFamilies,
-    lightgray: { ...colorPalette.typography.subtitle2, color: '#6A6A75', fontFamily: fontFamilies },
+    ...defaultTheme.typography, //TODO: CHANGE PALETTE FROM DEFAULT
   },
   components: {
     MuiButton: {
@@ -44,7 +35,7 @@ const defaultTheme = {
           props: { variant: 'link' },
           style: {
             backgroundColor: 'transparent',
-            color: colorPalette.palette.primary.main,
+            color: spiceMoneyColorPalette.palette.primary.main,
             padding: 0,
             margin: 0,
             '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
@@ -65,5 +56,4 @@ const defaultTheme = {
     MuiAppBar: { styleOverrides: { root: { height: topNavHeight + 'px' } } },
   },
 };
-
-export default defaultTheme;
+export default spiceMoneyTheme;

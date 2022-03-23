@@ -9,19 +9,25 @@ import {
   Slide,
   Snackbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import type { GetStaticProps, NextPage } from 'next';
+import type { GetStaticProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { registerWithBankApi, verifyOTPApi } from '../api-requests/verify';
-import CountDownTimer from '../components/CountDownTimer/CountDownTimer';
-import ChevronLeft from '../components/Icons/ChevronLeft';
-import OTPInput from '../components/OTPInput/OTPInput';
-import TextFieldTrimmed from '../components/TextFieldTrimmed/TextFieldTrimmed';
-import classes from './index.module.css';
+import { registerWithBankApi, verifyOTPApi } from 'api-requests/verify';
+import CountDownTimer from 'components/CountDownTimer/CountDownTimer';
+import ChevronLeft from 'components/Icons/ChevronLeft';
+import OTPInput from 'components/OTPInput/OTPInput';
+import TextFieldTrimmed from 'components/TextFieldTrimmed/TextFieldTrimmed';
+import styles from 'pages/index.module.css';
+import Head from 'next/head';
+import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
+import { grey } from '@mui/material/colors';
+import Image from 'next/image';
 
 type VerifyPhoneForm = {
   phoneNumber: string;
@@ -29,7 +35,7 @@ type VerifyPhoneForm = {
 
 const OTPLength = 6;
 
-const Home: NextPage = () => {
+const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo }) => {
   const { t } = useTranslation(['verify-phone', 'common']);
   const {
     handleSubmit,
@@ -41,7 +47,7 @@ const Home: NextPage = () => {
   } = useForm<VerifyPhoneForm>({ defaultValues: { phoneNumber: '' } });
 
   const [enteredOTP, setEnteredOTP] = useState<string>('');
-  const [otpErrMessage, setOTPErrMessage] = useState<string>(t('enter-otp'));
+  const [otpErrMessage, setOTPErrMessage] = useState<string>('');
   const [isOTPError, setIsOTPError] = useState(false);
   const [showResendBtn, setShowResendBtn] = useState(false);
   const [restartTimerKey, setRestartTimerKey] = useState(0);
@@ -52,6 +58,8 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [verifyPhoneBtnLoading, setVerifyPhoneBtnLoading] = useState(false);
+  const themeHook = useTheme();
+  const isXs = useMediaQuery(themeHook.breakpoints.down('sm'));
 
   const otpContainerRef = useRef(null);
 
@@ -61,7 +69,7 @@ const Home: NextPage = () => {
   const onResendClick = () => {
     setShowResendBtn(false);
     setClearOTPKey((prev) => prev + 1);
-    setOTPErrMessage(t('enter-otp'));
+    setOTPErrMessage(t(''));
     setIsOTPError(false);
     requestOTP(getValues());
   };
@@ -92,21 +100,22 @@ const Home: NextPage = () => {
       const res = await verifyOTPApi({ otp: enteredOTP, sessionId, mobile: `91${getValues().phoneNumber}` });
       setSnackMessage(res.data.message);
       setVerifyPhoneBtnLoading(false);
+      localStorage.setItem('mobile', getValues().phoneNumber);
+      router.replace('/kyc');
     } catch (error) {
       setVerifyPhoneBtnLoading(false);
       console.log(error);
       setIsOTPError(true);
       setOTPErrMessage(error.response?.data?.message || t<string>('an-error-occurred', { ns: 'common' }));
       setSnackMessage(error.response?.data?.message || t<string>('an-error-occurred', { ns: 'common' }));
-      router.replace('/kyc');
     }
   };
 
   const onBackClick = () => {
     setShowOTP(false);
-    // setTimeout(() => {
-    setFocus('phoneNumber');
-    // }, 600);
+    setTimeout(() => {
+      setFocus('phoneNumber');
+    }, 300);
   };
 
   useEffect(() => {
@@ -117,7 +126,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     setIsOTPError(false);
-    setOTPErrMessage(t('enter-otp'));
+    setOTPErrMessage(t(''));
   }, [enteredOTP, setOTPErrMessage, t]);
 
   useEffect(() => {
@@ -125,132 +134,169 @@ const Home: NextPage = () => {
   }, [setFocus]);
 
   return (
-    <Box
-      sx={{ py: 3, px: 3, borderRadius: 2, overflowX: 'hidden', borderTop: `5px solid`, borderTopColor: `primary.main` }}
-      className={`${classes.verifyPageWrapper} custom-box-shadow-2`}
-      ref={otpContainerRef}>
-      {!showOTP && (
-        <Box component="form" onSubmit={handleSubmit(requestOTP)}>
-          <Box component="h2" textAlign={{ xs: 'left', sm: 'center' }}>
-            {t('ready-to-activate')}
+    <>
+      <Head>
+        <title>{`${props.selectedBusinessWhitelabelValues.businessName} - Verify Mobile number`}</title>
+      </Head>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
+        {props.selectedBusinessWhitelabelValues.bgImage && (isXs ? !showOTP : true) && (
+          <Box sx={{ width: { xs: '100vw', sm: 'auto' }, p: 0, m: 0, flexBasis: { sm: '50%' } }} className="imageWrapper">
+            <Image
+              src={`/${props.selectedBusinessWhitelabelValues.bgImage}`}
+              layout="responsive"
+              width="700"
+              height="700"
+              objectFit="cover"
+              alt="card-image"
+              priority
+            />
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <FormControl sx={{ flexBasis: { xs: '100%', sm: '80%', lg: '70%' } }}>
-              <FormLabel sx={{ mb: 1 }} id="phoneLbl" htmlFor="phoneTxtField">
-                {t('phone-number')}
-              </FormLabel>
-              <Controller
-                render={({ field }) => (
-                  <TextFieldTrimmed
-                    id="phoneTxtField"
-                    error={Boolean(errors.phoneNumber)}
-                    helperText={errors.phoneNumber?.message || t('enter-registered-phone-number')}
-                    value={field.value}
-                    placeholder={t('phone-number')}
-                    type="tel"
-                    onChange={field.onChange}
-                    inputRef={field.ref}
-                    sx={{ mb: 3 }}
-                    reactHookFormKey="phoneNumber"
-                    setTrimmedValueOnBlurOrSubmit={setValue}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment sx={{ mr: 2 }} position="start">
-                          +91
-                        </InputAdornment>
-                      ),
+        )}
+        <Box
+          sx={{ py: 3, px: { xs: 2, sm: 3 }, overflowX: 'hidden', flexBasis: { sm: '50%' } }}
+          className={`${styles.verifyPageWrapper}`}
+          ref={otpContainerRef}>
+          {!showOTP && (
+            <Box component="form" onSubmit={handleSubmit(requestOTP)}>
+              <Box textAlign={{ xs: 'left', sm: 'center' }}>
+                <Typography variant="h4" fontWeight="700" sx={{ mt: 2, textAlign: 'left' }}>
+                  {t('welcome')}
+                </Typography>
+                <Typography variant="caption" component="div" fontWeight={400} color={grey[700]} sx={{ textAlign: 'left' }}>
+                  {t('two-steps')}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                <FormControl sx={{ flexBasis: { xs: '100%' } }}>
+                  <FormLabel sx={{ mb: 1 }} id="phoneLbl" htmlFor="phoneTxtField">
+                    {t('phone-number')}
+                  </FormLabel>
+                  <Controller
+                    render={({ field }) => (
+                      <TextFieldTrimmed
+                        id="phoneTxtField"
+                        error={Boolean(errors.phoneNumber)}
+                        helperText={errors.phoneNumber?.message}
+                        value={field.value}
+                        placeholder={t('phone-number')}
+                        type="tel"
+                        onChange={field.onChange}
+                        inputRef={field.ref}
+                        sx={{ mb: 1 }}
+                        reactHookFormKey="phoneNumber"
+                        setTrimmedValueOnBlurOrSubmit={setValue}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment sx={{ mr: 2 }} position="start">
+                              +91
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    )}
+                    name="phoneNumber"
+                    control={control}
+                    rules={{
+                      required: { value: true, message: t('enter-registered-phone-number') },
+                      minLength: { value: 10, message: t('enter-10-digit-number') },
+                      maxLength: { value: 10, message: t('enter-10-digit-number') },
+                      pattern: { value: /^\d+$/, message: t('enter-10-digit-number') },
                     }}
                   />
-                )}
-                name="phoneNumber"
-                control={control}
-                rules={{
-                  required: { value: true, message: t('enter-registered-phone-number') },
-                  minLength: { value: 10, message: t('enter-10-digit-number') },
-                  maxLength: { value: 10, message: t('enter-10-digit-number') },
-                  pattern: { value: /^\d+$/, message: t('enter-10-digit-number') },
-                }}
-              />
-            </FormControl>
-          </Box>
-          <Box sx={{ display: 'flex', mt: 3, justifyContent: { sm: 'center' } }}>
-            <Button disabled={loading} type="submit" sx={{ flexGrow: { xs: 1, sm: 0 } }}>
-              {loading ? <CircularProgress color="inherit" /> : t('send-otp')}
-            </Button>
-          </Box>
-        </Box>
-      )}
-      {showOTP && (
-        <Box component="form" onSubmit={verifyOTP} autoComplete="off">
-          <Slide
-            direction="right"
-            timeout={{ enter: 320 }}
-            in={showOTP}
-            easing={{
-              enter: 'cubic-bezier(.65,.53,.51,.65)',
-              exit: 'linear',
-            }}
-            container={otpContainerRef.current}
-            mountOnEnter
-            unmountOnExit>
-            {/* easing={{ enter: 'easeOut', exit: 'ease-in-out' }} */}
-            <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Button
-                  onClick={onBackClick}
-                  variant="no-style"
-                  sx={{ minWidth: '16px', display: 'grid', placeContent: 'center', mr: 0.5, cursor: 'pointer' }}>
-                  <ChevronLeft />
-                </Button>
-                <Box component="h2" sx={{ pr: 1.2 }}>
-                  {t('verify-otp')}
-                </Box>
+                </FormControl>
               </Box>
-              <FormControl sx={{ display: 'grid', placeContent: 'center' }}>
-                <Box>
-                  <FormLabel sx={{ mb: 1 }} id="otpInpLbl">
-                    {t('otp')}
-                  </FormLabel>
-                  <OTPInput
-                    clearOTPKey={clearOTPKey}
-                    noOfInputs={OTPLength}
-                    setValue={setEnteredOTP}
-                    isErrorProp={isOTPError}
-                    onEnterPressed={verifyOTP}
-                  />
-                  <FormHelperText error={isOTPError}>{otpErrMessage}</FormHelperText>
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1 }}>
-                    {showResendBtn ? (
-                      <Button size="small" variant="link" onClick={onResendClick} sx={{ minHeight: 'auto' }}>
-                        {t('resend-otp')}
-                      </Button>
-                    ) : (
-                      <>
-                        <FormHelperText sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="subtitle2" component="span">
-                            {t('didnt-receive')}
-                          </Typography>
-                          <Typography variant="lightgray" sx={{ display: 'flex', gap: 0.5 }}>
-                            <span> {t('resend-in')} </span>
-                            <CountDownTimer restartTimerKey={restartTimerKey} startTimeInSeconds={60} onTimerDone={onTimerDone} />
-                          </Typography>
-                        </FormHelperText>
-                      </>
-                    )}
-                  </Box>
-                </Box>
-              </FormControl>
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                <Button disabled={verifyPhoneBtnLoading} type="button" onClick={verifyOTP} sx={{ flexGrow: { xs: 1, sm: 0 } }}>
-                  {verifyPhoneBtnLoading ? <CircularProgress color="inherit" /> : t('verify-otp')}
+              <Box sx={{ display: 'flex', mt: 2 }}>
+                <Button disabled={loading} type="submit" sx={{ flexGrow: { xs: 1, sm: 0 } }}>
+                  {loading ? <CircularProgress color="inherit" /> : t('send-otp')}
                 </Button>
               </Box>
             </Box>
-          </Slide>
+          )}
+          {showOTP && (
+            <Box component="form" onSubmit={verifyOTP} autoComplete="off">
+              <Slide
+                direction="right"
+                timeout={{ enter: 320 }}
+                in={showOTP}
+                easing={{
+                  enter: 'cubic-bezier(.65,.53,.51,.65)',
+                  exit: 'linear',
+                }}
+                container={otpContainerRef.current}
+                mountOnEnter
+                unmountOnExit>
+                {/* easing={{ enter: 'easeOut', exit: 'ease-in-out' }} */}
+                <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+                    <Button
+                      onClick={onBackClick}
+                      variant="no-style"
+                      sx={{ minWidth: '16px', display: 'grid', placeContent: 'center', mr: 0.5, cursor: 'pointer' }}>
+                      <ChevronLeft />
+                    </Button>
+                    <Typography variant="h5" fontWeight="700" sx={{ pr: 1.2, textAlign: 'left' }}>
+                      {t('verify-otp')}
+                    </Typography>
+                  </Box>
+                  <FormControl>
+                    <Box>
+                      <FormLabel sx={{ mb: 1 }} id="otpInpLbl">
+                        {t('otp')}
+                      </FormLabel>
+                      <OTPInput
+                        clearOTPKey={clearOTPKey}
+                        noOfInputs={OTPLength}
+                        setValue={setEnteredOTP}
+                        isErrorProp={isOTPError}
+                        onEnterPressed={verifyOTP}
+                      />
+                      <FormHelperText error={isOTPError}>{otpErrMessage}</FormHelperText>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                        {showResendBtn ? (
+                          <Button
+                            size="small"
+                            variant="link"
+                            onClick={onResendClick}
+                            sx={{ minHeight: 'auto', my: { xs: 1, sm: 0.6 } }}>
+                            {t('resend-otp')}
+                          </Button>
+                        ) : (
+                          <>
+                            <FormHelperText sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="subtitle2" component="span">
+                                {t('didnt-receive')}
+                              </Typography>
+                              <Typography variant="lightgray" sx={{ display: 'flex', gap: 0.5 }}>
+                                <span> {t('resend-in')} </span>
+                                <CountDownTimer
+                                  restartTimerKey={restartTimerKey}
+                                  startTimeInSeconds={60}
+                                  onTimerDone={onTimerDone}
+                                />
+                              </Typography>
+                            </FormHelperText>
+                          </>
+                        )}
+                      </Box>
+                    </Box>
+                  </FormControl>
+                  <Box sx={{ display: 'flex', mt: 3 }}>
+                    <Button
+                      disabled={verifyPhoneBtnLoading}
+                      type="button"
+                      onClick={verifyOTP}
+                      sx={{ flexGrow: { xs: 1, sm: 0 } }}>
+                      {verifyPhoneBtnLoading ? <CircularProgress color="inherit" /> : t('verify-otp')}
+                    </Button>
+                  </Box>
+                </Box>
+              </Slide>
+            </Box>
+          )}
+          <Snackbar open={Boolean(snackMessage)} message={snackMessage} autoHideDuration={3000}></Snackbar>
         </Box>
-      )}
-      <Snackbar open={Boolean(snackMessage)} message={snackMessage} autoHideDuration={3000}></Snackbar>
-    </Box>
+      </Box>
+    </>
   );
 };
 
