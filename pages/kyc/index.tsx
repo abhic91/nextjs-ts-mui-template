@@ -100,10 +100,10 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
   const submitForm = async (data: TKYCForm) => {
     try {
       setLoading(true);
-      data = { ...data, dob: dayjs(data.dob).format('YYYY-MM-DD'), mobile: localStorage.getItem('mobile')! };
+      data = { ...data, dob: dayjs(data.dob).format('YYYY-MM-DD'), mobile: `91${localStorage.getItem('mobile')!}` };
       const res = await submitKYCDetailsApi(data);
       setLoading(false);
-      console.log(res);
+      setSnackMessage(res.data.message);
       router.replace('/kyc-success');
     } catch (error) {
       setLoading(false);
@@ -111,7 +111,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
       console.log(error);
     }
   };
-  const isMobileVerificationDone = () => localStorage.getItem('mobile') !== null;
+  const isMobileVerificationDone = () => Boolean(localStorage.getItem('mobile'));
   useEffect(() => {
     if (!isMobileVerificationDone()) {
       router.replace('/');

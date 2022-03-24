@@ -2,4 +2,6 @@
   /* width: 60vw; */
   margin: auto;
   background-color: var(--default-bg);
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }

@@ -8,6 +8,7 @@ export type T_SingleBusinessWhitelabelInfo = {
 export type T_WhitelabelBusinesses = {
   default: T_SingleBusinessWhitelabelInfo;
   policyBoss: T_SingleBusinessWhitelabelInfo;
+  xoltt: T_SingleBusinessWhitelabelInfo;
   genpay: T_SingleBusinessWhitelabelInfo;
   spiceMoney: T_SingleBusinessWhitelabelInfo;
 };
@@ -20,7 +21,14 @@ const whitelabel: T_WhitelabelBusinesses = {
     businessLogo: 'images/business-logos/card91_logo.png',
     businessKey: 'default',
     bgImage: 'images/bg-image.png',
-    poweredByImg: null,
+    poweredByImg: 'images/business-logos/card91_logo.png',
+  },
+  xoltt: {
+    businessName: 'Xoltt',
+    businessLogo: 'images/business-logos/xoltt_logo.svg',
+    businessKey: 'xoltt',
+    bgImage: 'images/bg-image.png',
+    poweredByImg: 'images/business-logos/xoltt_logo.svg',
   },
   policyBoss: {
     businessName: 'PolicyBoss',

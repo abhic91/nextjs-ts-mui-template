@@ -4,18 +4,10 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { ReactNode, useEffect, useState } from 'react';
 // import SuccessIcon from 'components/Icons/SuccessIcon';
-import { topNavHeight } from 'theme/themes.constants';
 import classes from 'pages/kyc-success/index.module.css';
 import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 import Image from 'next/image';
-
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale!, ['success-page'])),
-    },
-  };
-};
+import Head from 'next/head';
 
 const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo }) => {
   const { t } = useTranslation(['success-page']);
@@ -26,9 +18,11 @@ const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelVal
   }, []);
   return (
     <>
-      <title>{`${props.selectedBusinessWhitelabelValues.businessName} - KYC Successful`}</title>
+      <Head>
+        <title>{`${props.selectedBusinessWhitelabelValues.businessName} - KYC Successful`}</title>
+      </Head>
       <Fade in={showPage} timeout={800}>
-        <Box className={`${classes.successPageWrapper} `} sx={{ height: `calc(100vh - ${topNavHeight}px)` }}>
+        <Box className={`${classes.successPageWrapper} `} sx={{ minHeight: '60vh' }}>
           <Box
             sx={{
               p: 4,
@@ -53,6 +47,14 @@ const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelVal
       </Fade>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, ['success-page'])),
+    },
+  };
 };
 
 export default KycSuccess;

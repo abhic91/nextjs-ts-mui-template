@@ -259,13 +259,13 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                         onEnterPressed={verifyOTP}
                       />
                       <FormHelperText error={isOTPError}>{otpErrMessage}</FormHelperText>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'start', mt: 1, minHeight: '42px' }}>
                         {showResendBtn ? (
                           <Button
                             size="small"
                             variant="link"
                             onClick={onResendClick}
-                            sx={{ minHeight: 'auto', my: { xs: 1, sm: 0.6 } }}>
+                            sx={{ minHeight: 'auto', my: { xs: 1, sm: 0 } }}>
                             {t('resend-otp')}
                           </Button>
                         ) : (
@@ -288,7 +288,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                       </Box>
                     </Box>
                   </FormControl>
-                  <Box sx={{ display: 'flex', mt: 3 }}>
+                  <Box sx={{ display: 'flex', mt: 1 }}>
                     <Button
                       disabled={verifyPhoneBtnLoading}
                       type="button"

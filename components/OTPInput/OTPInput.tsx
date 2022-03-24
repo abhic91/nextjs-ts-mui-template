@@ -7,13 +7,11 @@ type OTPInputProps = {
   noOfInputs: number;
   isDisabled?: Boolean;
   isErrorProp: Boolean;
-  clearOTPKey?: number; //TODO:
+  clearOTPKey?: number;
   setValue: Dispatch<SetStateAction<string>>; //function that sets value of parent's otp val state
   onEnterPressed: Function;
   //   inputTypeProp: '';
 };
-//TODO: SIZE ON MOBILE
-//TODO: TRIM
 
 const OTPInput = ({ noOfInputs, isErrorProp, setValue, isDisabled, onEnterPressed, clearOTPKey }: OTPInputProps) => {
   const noOfInputsArray = [...Array(noOfInputs)];
