@@ -146,7 +146,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
       <Head>
         <title>{`${props.selectedBusinessWhitelabelValues.businessName} - Verify Mobile number`}</title>
       </Head>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }} className={styles.contentWrapper}>
         {props.selectedBusinessWhitelabelValues.bgImage && (isXs ? !showOTP : true) && (
           <Box sx={{ width: { xs: '100vw', sm: 'auto' }, p: 0, m: 0, flexBasis: { sm: '50%' } }} className="imageWrapper">
             <Image

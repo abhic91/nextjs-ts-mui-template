@@ -30,7 +30,6 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 const getWhitelabelKeyFromHostname = (host: string): T_WhitelabelBusinessKeys => {
   if (!host) return 'default';
   const hostname = host.split(':')[0] || '';
-  if (hostname.includes('keen')) return 'xoltt';
   return (Object.keys(whitelabel).find((key) => hostname.toLowerCase().includes(key.toLowerCase())) ||
     'default') as T_WhitelabelBusinessKeys;
 };

@@ -10,12 +10,12 @@
 
 @media screen and (max-width: 1200px) {
   .contentWrapper {
-    width: 70vw;
+    width: 85vw;
   }
 }
 @media screen and (max-width: 800px) {
   .contentWrapper {
-    width: 80vw;
+    width: 85vw;
   }
 }
 @media screen and (max-width: 599px) {

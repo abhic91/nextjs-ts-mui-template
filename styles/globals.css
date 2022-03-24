@@ -41,7 +41,7 @@ a {
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
 }
-@media screen and (max-width: 599px) {
+@media screen and (max-width: 680px) {
   .imageWrapper img {
     border-radius: 2px;
   }
