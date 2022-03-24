@@ -106,10 +106,10 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
       }
       setVerifyPhoneBtnLoading(true);
       const res = await verifyOTPApi({ otp: enteredOTP, sessionId, mobile: `91${getValues().phoneNumber}` });
-      setSnackMessage(res.data.message);
-      setVerifyPhoneBtnLoading(false);
+      setSnackMessage(res.data.message + ' Redirecting...');
       localStorage.setItem('mobile', getValues().phoneNumber);
       router.replace('/kyc');
+      setVerifyPhoneBtnLoading(false);
     } catch (error) {
       setVerifyPhoneBtnLoading(false);
       console.log(error);
