@@ -22,7 +22,7 @@ const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelVal
         <title>{`${props.selectedBusinessWhitelabelValues.businessName} - KYC Successful`}</title>
       </Head>
       <Fade in={showPage} timeout={800}>
-        <Box className={`${classes.successPageWrapper} `} sx={{ minHeight: '60vh' }}>
+        <Box className={`${classes.successPageWrapper} `} sx={{ minHeight: '50vh' }}>
           <Box
             sx={{
               p: 4,

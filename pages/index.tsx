@@ -52,6 +52,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
     setFocus,
     getValues,
     setValue,
+    trigger,
   } = useForm<VerifyPhoneForm>({ defaultValues: { phoneNumber: '' } });
 
   const [enteredOTP, setEnteredOTP] = useState<string>('');
@@ -191,6 +192,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                         onChange={field.onChange}
                         inputRef={field.ref}
                         sx={{ mb: 1 }}
+                        callbackOnBlur={() => trigger('phoneNumber')}
                         reactHookFormKey="phoneNumber"
                         setTrimmedValueOnBlurOrSubmit={setValue}
                         InputProps={{
