@@ -12,7 +12,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import type { GetStaticProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -31,6 +31,14 @@ import Image from 'next/image';
 
 type VerifyPhoneForm = {
   phoneNumber: string;
+};
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(ctx.locale!, ['verify-phone', 'common'])),
+    },
+  };
 };
 
 const OTPLength = 6;
@@ -298,14 +306,6 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
       </Box>
     </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async (ctx) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(ctx.locale!, ['verify-phone', 'common'])),
-    },
-  };
 };
 
 export default Home;

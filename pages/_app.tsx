@@ -19,20 +19,17 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(appContext);
   const selectedBusinessWhitelabelKey = getWhitelabelKeyFromHostname(appContext.ctx.req?.headers.host || '');
-  console.log(selectedBusinessWhitelabelKey, appContext.ctx.req?.headers.host, 'selectedBusinessWhitelabelKey');
   const selectedBusinessWhitelabelValues = whitelabel[selectedBusinessWhitelabelKey];
-  console.log(selectedBusinessWhitelabelValues, whitelabel, 'whitelabe');
   return {
     ...appProps,
     selectedBusinessWhitelabelValues,
-    themeObj: allThemes['policyBoss'],
+    themeObj: allThemes[selectedBusinessWhitelabelKey],
   };
 };
 
 const getWhitelabelKeyFromHostname = (host: string): T_WhitelabelBusinessKeys => {
   if (!host) return 'default';
   const hostname = host.split(':')[0] || '';
-  if (hostname.includes('keen')) return 'policyBoss';
   return (Object.keys(whitelabel).find((key) => hostname.toLowerCase().includes(key.toLowerCase())) ||
     'default') as T_WhitelabelBusinessKeys;
 };

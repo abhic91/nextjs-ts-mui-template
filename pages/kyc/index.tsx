@@ -15,7 +15,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
@@ -57,7 +57,7 @@ export type TKYCForm = {
   pinCode: string;
   gender: GENDER;
 };
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale!, ['kyc-form', 'common'])),

@@ -1,5 +1,5 @@
 import { Box, Fade, Typography } from '@mui/material';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { ReactNode, useEffect, useState } from 'react';
@@ -8,6 +8,14 @@ import { topNavHeight } from 'theme/themes.constants';
 import classes from 'pages/kyc-success/index.module.css';
 import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 import Image from 'next/image';
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, ['success-page'])),
+    },
+  };
+};
 
 const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo }) => {
   const { t } = useTranslation(['success-page']);
@@ -45,14 +53,6 @@ const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelVal
       </Fade>
     </>
   );
-};
-
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale!, ['success-page'])),
-    },
-  };
 };
 
 export default KycSuccess;
