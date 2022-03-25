@@ -52,7 +52,6 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
     setFocus,
     getValues,
     setValue,
-    trigger,
   } = useForm<VerifyPhoneForm>({ defaultValues: { phoneNumber: '' } });
 
   const [enteredOTP, setEnteredOTP] = useState<string>('');
@@ -163,7 +162,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
           </Box>
         )}
         <Box
-          sx={{ py: 3, px: { xs: 2, sm: 5 }, overflowX: 'hidden', flexBasis: { sm: '50%' } }}
+          sx={{ py: 3, px: { xs: 2, sm: 5, lg: 10 }, overflowX: 'hidden', flexBasis: { sm: '50%' } }}
           className={`${styles.verifyPageWrapper}`}
           ref={otpContainerRef}>
           {!showOTP && (
@@ -171,6 +170,9 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
               <Box textAlign={{ xs: 'left', sm: 'center' }}>
                 <Typography variant="h4" fontWeight="700" sx={{ mt: 2, textAlign: 'left' }}>
                   {t('welcome')}
+                </Typography>
+                <Typography variant="h6" fontWeight="700" sx={{ mt: 2, textAlign: 'left', display: { xs: 'none', sm: 'block' } }}>
+                  {t('ready-to-activate')}
                 </Typography>
                 <Typography variant="caption" component="div" fontWeight={400} color={grey[700]} sx={{ textAlign: 'left' }}>
                   {t('two-steps')}
@@ -193,7 +195,6 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                         onChange={field.onChange}
                         inputRef={field.ref}
                         sx={{ mb: 1 }}
-                        callbackOnBlur={() => trigger('phoneNumber')}
                         reactHookFormKey="phoneNumber"
                         setTrimmedValueOnBlurOrSubmit={setValue}
                         InputProps={{
