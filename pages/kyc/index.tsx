@@ -163,7 +163,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
             sx={{
               pt: 4,
               pb: 3,
-              px: { xs: 2, md: 5 },
+              px: { xs: 2, sm: 4, md: 6 },
               borderRadius: 2,
               flexBasis: { xs: '100%', sm: '50%' },
               maxHeight: formHeight,
@@ -190,7 +190,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                           trigger('aadhaarNumber');
                         }}
                         name="idType"
-                        sx={{ gap: 1.5, pl: 1.5 }}
+                        sx={{ gap: 1.5, pl: 1.5, mb: { xs: 1, sm: 2 } }}
                         row>
                         <FormControlLabelBordered
                           value={IDType.PAN}
@@ -260,7 +260,6 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                             inputRef={field.ref}
                             placeholder={t('enter-aadhaar')}
                             sx={{ mb: { xs: 1, sm: 2.5 } }}
-                            callbackOnBlur={() => trigger('aadhaarNumber')}
                             reactHookFormKey="aadhaarNumber"
                             setTrimmedValueOnBlurOrSubmit={setValue}
                           />
@@ -298,7 +297,6 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                         placeholder={getValues().idType === 'PAN' ? t('name-on-pan') : t('name-on-aadhaar')}
                         sx={{ mb: { xs: 1, sm: 2.5 } }}
                         reactHookFormKey="name"
-                        callbackOnBlur={() => trigger('name')}
                         setTrimmedValueOnBlurOrSubmit={setValue}
                       />
                     )}
@@ -408,7 +406,6 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                         placeholder={t('enter-address')}
                         sx={{ mb: { xs: 1, sm: 2.5 } }}
                         reactHookFormKey="address"
-                        callbackOnBlur={() => trigger('address')}
                         setTrimmedValueOnBlurOrSubmit={setValue}
                         autoComplete="off"
                       />
@@ -439,7 +436,6 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                         inputRef={field.ref}
                         placeholder={t('enter-pin')}
                         sx={{ mb: { xs: 1, sm: 2.5 } }}
-                        callbackOnBlur={() => trigger('pinCode')}
                         reactHookFormKey="pinCode"
                         setTrimmedValueOnBlurOrSubmit={setValue}
                       />
