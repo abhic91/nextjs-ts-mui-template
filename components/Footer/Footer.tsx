@@ -1,6 +1,7 @@
 import { Box, Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Image from 'next/image';
+// import Image from 'next/image';
 import Link from 'next/link';
 import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 
@@ -47,7 +48,7 @@ const Footer = ({ businessName, poweredByImg }: T_SingleBusinessWhitelabelInfo) 
               <Typography variant="body2" color={grey[500]} sx={{ mr: 1 }}>
                 Powered by
               </Typography>
-              <Image src={`/${poweredByImg}`} width={70} height={50} objectFit="contain" alt="logo" />
+              <Image src={`/${poweredByImg}`} width={60} height={50} objectFit="contain" alt="logo" />
             </Box>
           )}
         </Box>

@@ -20,7 +20,7 @@ export async function submitKYCDetailsApi(payload: TKYCForm) {
     idType = 'aadhaar';
   } else {
     idType = 'pan';
-    reqBody = { ...reqBody, panNumber: payload.panNumber! };
+    reqBody = { ...reqBody, panNumber: payload.panNumber!.toUpperCase() };
   }
   try {
     const res = await axios.post(`${baseAPIURL}/cardholders/yesbank/${idType}`, reqBody);

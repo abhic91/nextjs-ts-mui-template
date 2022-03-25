@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/system';
 
-export const topNavHeight = '55';
+export const topNavHeight = '60';
 export const fontFamilies = [
   'PPTelegraf',
   '-apple-system',

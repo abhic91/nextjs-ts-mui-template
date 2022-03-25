@@ -28,7 +28,7 @@ const whitelabel: T_WhitelabelBusinesses = {
     businessLogo: 'images/business-logos/xoltt_logo.svg',
     businessKey: 'xoltt',
     bgImage: 'images/bg-image.png',
-    poweredByImg: 'images/business-logos/xoltt_logo.svg',
+    poweredByImg: 'images/business-logos/card91_logo.png',
   },
   policyBoss: {
     businessName: 'PolicyBoss',

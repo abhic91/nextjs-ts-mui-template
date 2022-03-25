@@ -163,7 +163,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
           </Box>
         )}
         <Box
-          sx={{ py: 3, px: { xs: 2, sm: 3 }, overflowX: 'hidden', flexBasis: { sm: '50%' } }}
+          sx={{ py: 3, px: { xs: 2, sm: 5 }, overflowX: 'hidden', flexBasis: { sm: '50%' } }}
           className={`${styles.verifyPageWrapper}`}
           ref={otpContainerRef}>
           {!showOTP && (
@@ -217,7 +217,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                 </FormControl>
               </Box>
               <Box sx={{ display: 'flex', mt: 2 }}>
-                <Button disabled={loading} type="submit" sx={{ flexGrow: { xs: 1, sm: 0 } }}>
+                <Button disabled={loading} type="submit" sx={{ flexGrow: { xs: 1, sm: 0 }, px: 3 }}>
                   {loading ? <CircularProgress color="inherit" /> : t('send-otp')}
                 </Button>
               </Box>
@@ -238,11 +238,11 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                 unmountOnExit>
                 {/* easing={{ enter: 'easeOut', exit: 'ease-in-out' }} */}
                 <Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'stretch', my: 2 }}>
                     <Button
                       onClick={onBackClick}
                       variant="no-style"
-                      sx={{ minWidth: '16px', display: 'grid', placeContent: 'center', mr: 0.5, cursor: 'pointer' }}>
+                      sx={{ minWidth: '16px', display: 'grid', placeContent: 'center', mr: 1, cursor: 'pointer' }}>
                       <ChevronLeft />
                     </Button>
                     <Typography variant="h5" fontWeight="700" sx={{ pr: 1.2, textAlign: 'left' }}>
@@ -296,7 +296,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                       disabled={verifyPhoneBtnLoading}
                       type="button"
                       onClick={verifyOTP}
-                      sx={{ flexGrow: { xs: 1, sm: 0 } }}>
+                      sx={{ flexGrow: { xs: 1, sm: 0 }, px: 3 }}>
                       {verifyPhoneBtnLoading ? <CircularProgress color="inherit" /> : t('verify-otp')}
                     </Button>
                   </Box>

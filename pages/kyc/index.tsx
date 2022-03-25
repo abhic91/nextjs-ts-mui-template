@@ -104,6 +104,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
       const res = await submitKYCDetailsApi(data);
       setLoading(false);
       setSnackMessage(res.data.message);
+      localStorage.removeItem('mobile');
       router.replace('/kyc-success');
     } catch (error) {
       setLoading(false);
@@ -138,7 +139,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
       <Head>
         <title>{`${props.selectedBusinessWhitelabelValues.businessName} - Submit KYC Details`}</title>
       </Head>
-      <Fade in={showForm} timeout={{ enter: 500 }}>
+      <Fade in={showForm} timeout={{ enter: 300 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
           {props.selectedBusinessWhitelabelValues.bgImage && !isXs && (
             <Box
@@ -162,7 +163,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
             sx={{
               pt: 4,
               pb: 3,
-              px: { xs: 2, md: 2 },
+              px: { xs: 2, md: 5 },
               borderRadius: 2,
               flexBasis: { xs: '100%', sm: '50%' },
               maxHeight: formHeight,
@@ -226,6 +227,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                             inputRef={field.ref}
                             placeholder={t('enter-pan')}
                             sx={{ mb: { xs: 1, sm: 2.5 } }}
+                            textAllCaps
                             reactHookFormKey="panNumber"
                             callbackOnBlur={() => trigger('panNumber')}
                             setTrimmedValueOnBlurOrSubmit={setValue}

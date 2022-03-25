@@ -9,6 +9,7 @@ type TextFieldTrimmedProps = TextFieldProps & {
   callbackOnBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => void;
   // eslint-disable-next-line no-unused-vars
   callbackOnKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  textAllCaps?: boolean;
 };
 
 const TextFieldTrimmed = ({
@@ -16,6 +17,8 @@ const TextFieldTrimmed = ({
   reactHookFormKey,
   callbackOnBlur,
   callbackOnKeyDown,
+  inputProps,
+  textAllCaps,
   ...otherProps
 }: TextFieldTrimmedProps) => {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -28,7 +31,22 @@ const TextFieldTrimmed = ({
     setTrimmedValueOnBlurOrSubmit(reactHookFormKey, (e.target as HTMLInputElement).value?.trim());
     callbackOnBlur?.(e);
   };
-  return <TextField {...otherProps} onBlur={handleBlur} onKeyDown={handleKeyDown} />;
+  return (
+    <TextField
+      {...otherProps}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      inputProps={{
+        sx: textAllCaps
+          ? {
+              textTransform: { '&': { textTransform: 'uppercase', '&::placeholder': { textTransform: 'none' } } },
+              ...inputProps?.sx,
+            }
+          : { ...inputProps?.sx },
+        ...inputProps,
+      }}
+    />
+  );
 };
 
 export default TextFieldTrimmed;

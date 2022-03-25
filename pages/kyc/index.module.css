@@ -1,6 +1,7 @@
 .kycFormWrapper {
   /* width: 60vw; */
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   background-color: var(--default-bg);
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;

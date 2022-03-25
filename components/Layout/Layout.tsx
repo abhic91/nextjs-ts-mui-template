@@ -6,6 +6,7 @@ import { topNavHeight } from 'theme/themes.constants';
 // import { useTheme } from '@mui/system';
 import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 import styles from 'components/Layout/Layout.module.css';
+import { useRouter } from 'next/router';
 
 type LayoutProps = {
   children: ReactElement;
@@ -13,6 +14,8 @@ type LayoutProps = {
 };
 
 const Layout = ({ children, selectedBusinessWhitelabelValues }: LayoutProps) => {
+  const router = useRouter();
+  const isKycSuccess = router.pathname.includes('success');
   // const theme = useTheme();
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#e5e5e54f' }}>
@@ -29,7 +32,18 @@ const Layout = ({ children, selectedBusinessWhitelabelValues }: LayoutProps) => 
         </Box>
         {/* <Box sx={{ minHeight: `${topNavHeight}px` }}></Box> */}
       </AppBar>
-      <Box className={styles.contentWrapper}>{children}</Box>
+      <Box
+        className={styles.contentWrapper}
+        sx={{
+          width: {
+            xs: '100vw',
+            sm: isKycSuccess ? '55vw !important' : '',
+            md: isKycSuccess ? '45vw !important' : '',
+            lg: isKycSuccess ? '38vw !important' : '',
+          },
+        }}>
+        {children}
+      </Box>
       <Footer {...selectedBusinessWhitelabelValues}></Footer>
     </Box>
   );
