@@ -88,7 +88,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
       idType: IDType.PAN,
       mobile: '',
       name: '',
-      dob: dayjs(),
+      dob: null,
       address: '',
       pinCode: '',
       panNumber: '',
@@ -103,7 +103,7 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
       data = { ...data, dob: dayjs(data.dob).format('YYYY-MM-DD'), mobile: `91${localStorage.getItem('mobile')!}` };
       const res = await submitKYCDetailsApi(data);
       setLoading(false);
-      setSnackMessage(res.data.message);
+      setSnackMessage(res.data.message || '');
       localStorage.removeItem('mobile');
       router.replace('/kyc-success');
     } catch (error) {
@@ -458,7 +458,10 @@ const KycForm = (props: { children?: ReactNode; selectedBusinessWhitelabelValues
                 {loading ? <CircularProgress color="inherit" /> : t('complete-kyc')}
               </Button>
             </Box>
-            <Snackbar open={Boolean(snackMessage)} message={snackMessage}></Snackbar>
+            <Snackbar
+              open={Boolean(snackMessage)}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              message={snackMessage}></Snackbar>
           </Box>
         </Box>
       </Fade>

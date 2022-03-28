@@ -11,7 +11,8 @@ import Layout from 'components/Layout/Layout';
 import App, { AppContext, AppProps } from 'next/app';
 import allThemes from 'theme';
 import { useState } from 'react';
-import whitelabel, { T_SingleBusinessWhitelabelInfo, T_WhitelabelBusinessKeys } from 'whitelabel/whitelabel';
+import whitelabel, { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
+import { getWhitelabelKeyFromHostname } from 'utils/utils';
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
 
@@ -25,14 +26,6 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
     selectedBusinessWhitelabelValues,
     themeObj: allThemes[selectedBusinessWhitelabelKey],
   };
-};
-
-const getWhitelabelKeyFromHostname = (host: string): T_WhitelabelBusinessKeys => {
-  if (!host) return 'default';
-  const hostname = host.split(':')[0] || '';
-  if (hostname.includes('keen') || hostname.includes('vercel')) return 'xoltt';
-  return (Object.keys(whitelabel).find((key) => hostname.toLowerCase().includes(key.toLowerCase())) ||
-    'default') as T_WhitelabelBusinessKeys;
 };
 
 function MyApp(

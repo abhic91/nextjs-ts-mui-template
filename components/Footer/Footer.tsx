@@ -5,16 +5,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 
-const Footer = ({ businessName, poweredByImg }: T_SingleBusinessWhitelabelInfo) => {
+const Footer = ({ businessName, poweredByImg, linkToPrivacyPolicy }: T_SingleBusinessWhitelabelInfo) => {
   const fullYear = new Date().getFullYear();
   const themeHook = useTheme();
   const isXs = useMediaQuery(themeHook.breakpoints.down('sm'));
   const privacyPolicyElements = (
     <>
       <Typography color={grey[700]} variant="body2">
-        <Link href="/">Privacy Policy</Link>
+        {linkToPrivacyPolicy && (
+          <a href={linkToPrivacyPolicy} target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </a>
+        )}
       </Typography>
-      <Typography color={grey[700]} variant="body2" sx={{ mx: isXs ? 0 : 2 }}>
+      <Typography color={grey[700]} variant="body2" sx={{ mx: isXs ? 0 : 4 }}>
         <Link href="/"> Terms</Link>
       </Typography>
       <Typography color={grey[700]} variant="body2">

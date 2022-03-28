@@ -25,17 +25,30 @@ import OTPInput from 'components/OTPInput/OTPInput';
 import TextFieldTrimmed from 'components/TextFieldTrimmed/TextFieldTrimmed';
 import styles from 'pages/index.module.css';
 import Head from 'next/head';
-import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
+import whitelabel, { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 import { grey } from '@mui/material/colors';
 import Image from 'next/image';
+import { getWhitelabelKeyFromHostname } from 'utils/utils';
+import { getPlaiceholder } from 'plaiceholder';
 
 type VerifyPhoneForm = {
   phoneNumber: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  let imageProps = {};
+  try {
+    const selectedBusinessWhitelabelKey = getWhitelabelKeyFromHostname(ctx.req?.headers.host || '');
+    const selectedBusinessWhitelabelValues = whitelabel[selectedBusinessWhitelabelKey];
+    let { base64, img } = await getPlaiceholder(`/${selectedBusinessWhitelabelValues.bgImage}`);
+    imageProps = { ...img, blurDataURL: base64 };
+  } catch (error) {
+    console.error(error);
+  }
+
   return {
     props: {
+      imageProps,
       ...(await serverSideTranslations(ctx.locale!, ['verify-phone', 'common'])),
     },
   };
@@ -43,7 +56,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const OTPLength = 6;
 
-const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo }) => {
+const Home = (props: {
+  children?: ReactNode;
+  selectedBusinessWhitelabelValues: T_SingleBusinessWhitelabelInfo;
+  imageProps: {
+    blurDataURL: string;
+    src: string;
+    height: number;
+    width: number;
+    type?: string | undefined;
+  };
+}) => {
   const { t } = useTranslation(['verify-phone', 'common']);
   const {
     handleSubmit,
@@ -106,7 +129,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
       }
       setVerifyPhoneBtnLoading(true);
       const res = await verifyOTPApi({ otp: enteredOTP, sessionId, mobile: `91${getValues().phoneNumber}` });
-      const message = res.data.message.length > 0 ? res.data.message + '. Redirecting...' : 'Redirecting...';
+      const message = res.data.message?.length ? res.data.message + '. Redirecting...' : 'Redirecting...';
       setSnackMessage(message);
       localStorage.setItem('mobile', getValues().phoneNumber);
       router.replace('/kyc');
@@ -150,15 +173,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }} className={styles.contentWrapper}>
         {props.selectedBusinessWhitelabelValues.bgImage && (isXs ? !showOTP : true) && (
           <Box sx={{ width: { xs: '100vw', sm: 'auto' }, p: 0, m: 0, flexBasis: { sm: '50%' } }} className="imageWrapper">
-            <Image
-              src={`/${props.selectedBusinessWhitelabelValues.bgImage}`}
-              layout="responsive"
-              width="700"
-              height="700"
-              objectFit="cover"
-              alt="card-image"
-              priority
-            />
+            <Image layout="responsive" objectFit="cover" alt="card-image" priority placeholder="blur" {...props.imageProps} />
           </Box>
         )}
         <Box
@@ -171,7 +186,10 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                 <Typography variant="h4" fontWeight="700" sx={{ mt: 2, textAlign: 'left' }}>
                   {t('welcome')}
                 </Typography>
-                <Typography variant="h6" fontWeight="700" sx={{ mt: 2, textAlign: 'left', display: { xs: 'none', sm: 'block' } }}>
+                <Typography
+                  variant="h6"
+                  fontWeight="700"
+                  sx={{ mt: 2, textAlign: 'left', display: { xs: 'none', sm: 'block' }, letterSpacing: '0.35px' }}>
                   {t('ready-to-activate')}
                 </Typography>
                 <Typography variant="caption" component="div" fontWeight={400} color={grey[700]} sx={{ textAlign: 'left' }}>
@@ -269,7 +287,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                             size="small"
                             variant="link"
                             onClick={onResendClick}
-                            sx={{ minHeight: 'auto', my: { xs: 1, sm: 0 } }}>
+                            sx={{ minHeight: 'auto', my: { xs: 2, sm: 0 } }}>
                             {t('resend-otp')}
                           </Button>
                         ) : (
@@ -292,7 +310,7 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
                       </Box>
                     </Box>
                   </FormControl>
-                  <Box sx={{ display: 'flex', mt: 1 }}>
+                  <Box sx={{ display: 'flex', mt: 2 }}>
                     <Button
                       disabled={verifyPhoneBtnLoading}
                       type="button"
@@ -305,7 +323,11 @@ const Home = (props: { children?: ReactNode; selectedBusinessWhitelabelValues: T
               </Slide>
             </Box>
           )}
-          <Snackbar open={Boolean(snackMessage)} message={snackMessage} autoHideDuration={3000}></Snackbar>
+          <Snackbar
+            open={Boolean(snackMessage)}
+            message={snackMessage}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            autoHideDuration={3000}></Snackbar>
         </Box>
       </Box>
     </>

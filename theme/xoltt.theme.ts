@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
-import { fontFamilies, topNavHeight } from 'theme/themes.constants';
+import { fontFamilies } from './themes.constants';
 
-const colorPalette = createTheme({
+const xolttTheme = createTheme({
   palette: {
     primary: {
       main: '#6E44FD',
@@ -20,50 +20,53 @@ const colorPalette = createTheme({
     },
     background: { default: '#fff' },
   },
-});
-const xolttTheme = {
-  ...colorPalette,
   typography: {
     fontFamily: fontFamilies,
-    lightgray: { ...colorPalette.typography.subtitle2, color: '#6A6A75', fontFamily: fontFamilies },
   },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-          textTransform: 'capitalize',
-          minHeight: '36px',
-        },
-      },
-      defaultProps: {
-        variant: 'contained',
-      },
-      variants: [
-        {
-          props: { variant: 'link' },
-          style: {
-            backgroundColor: 'transparent',
-            color: colorPalette.palette.primary.main,
-            padding: 0,
-            margin: 0,
-            '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
-          },
-        },
-        { props: { variant: 'no-style' }, style: { all: 'unset' } },
-      ],
-    },
-    MuiOutlinedInput: {
-      styleOverrides: { root: { borderRadius: 8 } },
-      defaultProps: {},
-    },
-    MuiTextField: { defaultProps: { size: 'small' } },
-    MuiCircularProgress: {
-      defaultProps: { style: { width: '20px', height: '20px' } },
-    },
-    MuiRadio: { defaultProps: { size: 'small' } },
-    MuiAppBar: { styleOverrides: { root: { height: topNavHeight + 'px' } } },
-  },
-};
+});
+// const xolttTheme = {
+//   ...colorPalette,
+//   typography: {
+//     fontFamily: fontFamilies,
+//     lightgray: { ...colorPalette.typography.subtitle2, color: '#6A6A75', fontFamily: fontFamilies },
+//   },
+//   components: {
+//     MuiButton: {
+//       styleOverrides: {
+//         root: {
+//           borderRadius: 8,
+//           textTransform: 'capitalize',
+//           minHeight: '36px',
+//         },
+//       },
+//       defaultProps: {
+//         variant: 'contained',
+//       },
+//       variants: [
+//         {
+//           props: { variant: 'link' },
+//           style: {
+//             backgroundColor: 'transparent',
+//             color: colorPalette.palette.primary.main,
+//             padding: 0,
+//             margin: 0,
+//             '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+//           },
+//         },
+//         { props: { variant: 'no-style' }, style: { all: 'unset' } },
+//       ],
+//     },
+//     MuiOutlinedInput: {
+//       styleOverrides: { root: { borderRadius: 8 } },
+//       defaultProps: {},
+//     },
+//     MuiTextField: { defaultProps: { size: 'small' } },
+//     MuiCircularProgress: {
+//       defaultProps: { style: { width: '20px', height: '20px' } },
+//     },
+//     MuiRadio: { defaultProps: { size: 'small' } },
+//     MuiAppBar: { styleOverrides: { root: { height: topNavHeight + 'px' } } },
+//   },
+// };
 
 export default xolttTheme;

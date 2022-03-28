@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
-import theme from 'theme/default.theme';
 import createEmotionCache from 'createEmotionCache';
 // import { nanoid } from 'nanoid';
 
@@ -11,8 +10,6 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          {/* PWA primary color */}
-          <meta name="theme-color" content={theme.palette.primary.main} />
           {/* Inject MUI styles first to match with the prepend: true configuration. */}
           {(this.props as any).emotionStyleTags}
         </Head>

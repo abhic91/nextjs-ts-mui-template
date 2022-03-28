@@ -1,7 +1,7 @@
-import defaultTheme from 'theme/default.theme';
-import spiceMoneyTheme from 'theme/spiceMoney.theme';
+import { createTheme } from '@mui/material';
 import { T_WhitelabelBusinessKeys } from 'whitelabel/whitelabel';
 import policyBossTheme from './policy.theme';
+import { getCommonThemeSettings } from './themes.constants';
 import xolttTheme from './xoltt.theme';
 
 export type T_AllThemes = {
@@ -9,11 +9,8 @@ export type T_AllThemes = {
   [key in T_WhitelabelBusinessKeys]: any;
 };
 const allThemes: T_AllThemes = {
-  default: defaultTheme,
-  xoltt: xolttTheme,
-  policyBoss: policyBossTheme,
-  genpay: defaultTheme,
-  spiceMoney: spiceMoneyTheme,
+  xoltt: createTheme(xolttTheme, getCommonThemeSettings(xolttTheme)),
+  policyBoss: createTheme(policyBossTheme, getCommonThemeSettings(policyBossTheme)),
 };
 
 export default allThemes;

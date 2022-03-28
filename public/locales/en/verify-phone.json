@@ -1,7 +1,7 @@
 {
   "phone-number": "Phone number",
   "welcome": "Welcome",
-  "enter-registered-phone-number": "Enter your registered phone number",
+  "enter-registered-phone-number": "Enter your phone number",
   "enter-10-digit-number": "Enter a valid 10 digit phone number",
   "send-otp": "Send OTP",
   "otp": "OTP",
