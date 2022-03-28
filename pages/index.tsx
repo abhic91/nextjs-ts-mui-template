@@ -173,7 +173,16 @@ const Home = (props: {
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }} className={styles.contentWrapper}>
         {props.selectedBusinessWhitelabelValues.bgImage && (isXs ? !showOTP : true) && (
           <Box sx={{ width: { xs: '100vw', sm: 'auto' }, p: 0, m: 0, flexBasis: { sm: '50%' } }} className="imageWrapper">
-            <Image layout="responsive" objectFit="cover" alt="card-image" priority placeholder="blur" {...props.imageProps} />
+            <Image
+              layout="responsive"
+              objectFit="cover"
+              alt="card-image"
+              priority
+              placeholder="blur"
+              src={`/${props.selectedBusinessWhitelabelValues.bgImage}`}
+              width={700}
+              height={700}
+            />
           </Box>
         )}
         <Box
