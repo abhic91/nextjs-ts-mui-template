@@ -6,7 +6,6 @@ export const generateRandomId = () => Date.now().toString(36) + Math.random().to
 export const getWhitelabelKeyFromHostname = (host: string): T_WhitelabelBusinessKeys => {
   if (!host) return defaultThemeKey;
   const hostname = host.split(':')[0] || '';
-  if (hostname.includes('keen') || hostname.includes('vercel')) return defaultThemeKey;
   return (Object.keys(whitelabel).find((key) => hostname.toLowerCase().includes(key.toLowerCase())) ||
     defaultThemeKey) as T_WhitelabelBusinessKeys;
 };

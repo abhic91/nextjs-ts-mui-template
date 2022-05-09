@@ -1,5 +1,7 @@
 {
   "kyc-completed": "KYC Completed Successfully",
   "will-take": "It will take 2-3 working days to verify account.",
-  "will-inform": "We will inform you once your account is activated."
+  "will-inform": "We will inform you once your account is activated.",
+  "consent-registered": "Your consent is successfully registered.",
+  "please-download": "Please download the app to access your digital card."
 }

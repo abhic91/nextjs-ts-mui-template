@@ -13,5 +13,6 @@
   "invalid-otp": "The OTP you entered is invalid",
   "verified-successfully": "Your phone number has been verified successfully",
   "ready-to-activate": "Ready to activate your card",
-  "two-steps": "You're 2 steps away to activate your card."
+  "two-steps": "You're 2 steps away to activate your card.",
+  "one-step": "You're 1 step away to activate your card."
 }

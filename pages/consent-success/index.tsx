@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 // import SuccessIcon from 'components/Icons/SuccessIcon';
-import classes from 'pages/kyc-success/index.module.css';
+import classes from 'pages/consent-success/index.module.css';
 import { T_SingleBusinessWhitelabelInfo } from 'whitelabel/whitelabel';
 // import Image from 'next/image';
 import Head from 'next/head';
@@ -29,7 +29,7 @@ const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelVal
   return (
     <>
       <Head>
-        <title>{`${props.selectedBusinessWhitelabelValues.businessName} - KYC Successful`}</title>
+        <title>{`${props.selectedBusinessWhitelabelValues.businessName}`}</title>
       </Head>
       <Fade in={showPage} timeout={800}>
         <Box className={`${classes.successPageWrapper} `} sx={{ minHeight: '30vh', display: 'grid', placeContent: 'center' }}>
@@ -42,13 +42,10 @@ const KycSuccess = (props: { children?: ReactNode; selectedBusinessWhitelabelVal
             }}>
             <Box sx={{ width: '200px', height: '200px', margin: 'auto' }} ref={animationWrapperRef}></Box>
             <Typography variant="h5" fontWeight="700" textAlign="center" sx={{ mt: -4, mb: 1 }}>
-              {t('kyc-completed')}
+              {t('consent-registered')}
             </Typography>
             <Typography variant="subtitle2" textAlign="center" component="p" sx={{ mb: 1 }}>
-              {t('will-take')}
-            </Typography>
-            <Typography variant="lightgray" textAlign="center" component="p" sx={{ mt: 3 }}>
-              {t('will-inform')}
+              {t('please-download')}
             </Typography>
           </Box>
         </Box>

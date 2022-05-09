@@ -132,7 +132,7 @@ const Home = (props: {
       const message = res.data.message?.length ? res.data.message + '. Redirecting...' : 'Redirecting...';
       setSnackMessage(message);
       localStorage.setItem('mobile', getValues().phoneNumber);
-      router.replace('/kyc');
+      router.replace('/consent-success');
       setVerifyPhoneBtnLoading(false);
     } catch (error) {
       setVerifyPhoneBtnLoading(false);
@@ -168,7 +168,7 @@ const Home = (props: {
   return (
     <>
       <Head>
-        <title>{`${props.selectedBusinessWhitelabelValues.businessName} - Verify Mobile number`}</title>
+        <title>{`${props.selectedBusinessWhitelabelValues.businessName}`}</title>
       </Head>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }} className={styles.contentWrapper}>
         {props.selectedBusinessWhitelabelValues.bgImage && (isXs ? !showOTP : true) && (
@@ -193,7 +193,7 @@ const Home = (props: {
                   {t('ready-to-activate')}
                 </Typography>
                 <Typography variant="caption" component="div" fontWeight={400} color={grey[700]} sx={{ textAlign: 'left' }}>
-                  {t('two-steps')}
+                  {t('one-step')}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
